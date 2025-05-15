@@ -7,7 +7,7 @@ int main() {
 	const int Width = 500;
 
 	sf::RenderWindow window(sf::VideoMode(Width, Height), "Dots version.0.0.1",
-			sf::Style::Close | sf::Style::Titlebar); // so pro cara não estender a tela
+			sf::Style::Close | sf::Style::Titlebar); // so pro cara não estender a tela...
 	
 	window.setFramerateLimit(90);
 
