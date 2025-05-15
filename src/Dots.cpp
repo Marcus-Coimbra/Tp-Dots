@@ -1,30 +1,29 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
-int main(){
-	
+int main() {
+
 	const int Height = 500;
 	const int Width = 500;
 
-    sf::RenderWindow window(sf::VideoMode(Width, Height), "Dots version.0.0.1",
-    sf::Style::Close | sf::Style::Titlebar); // so pro cara não estender a tela...
-    window.setFramerateLimit(90);
-
-    // Loop principal
+	sf::RenderWindow window(sf::VideoMode(Width, Height), "Dots version.0.0.1",
+			sf::Style::Close | sf::Style::Titlebar); // so pro cara não estender a tela...
 	
-    while (window.isOpen()){
+	window.setFramerateLimit(90);
 
-        sf::Event event;
+	// Loop principal
+	while (window.isOpen()) {
+		sf::Event event;
 
-        while (window.pollEvent(event)){
+		while (window.pollEvent(event)) {
 
-            if (event.type == sf::Event::Closed)
-                window.close();
+			if (event.type == sf::Event::Closed)
+				window.close();
 
-        }
+		}
 
-        window.clear(sf::Color::White); // fundo preto
-        window.display();
-    }
-    return 0;
+		window.clear(sf::Color::White); // fundo preto
+		window.display();
+	}
+	return 0;
 }
