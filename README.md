@@ -7,8 +7,6 @@ Este foi um jogo feito como atividade no CEFET-MG/Contagem.
 
 Para compilar, foi utilizado SFML2.1, que foi instalado manualmente no projeto.
 
-![Organização SFML](https://i.imgur.com/VRgmqvG.png)
-
 ## Autores
 
 - [@Marcus-Coimbra](https://www.github.com/Marcus-Coimbra)
