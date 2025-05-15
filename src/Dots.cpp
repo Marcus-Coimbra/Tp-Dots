@@ -11,7 +11,7 @@ int main(){
     window.setFramerateLimit(90);
 
     // Loop principal
-
+	
     while (window.isOpen()){
 
         sf::Event event;
@@ -23,7 +23,7 @@ int main(){
 
         }
 
-        window.clear(sf::Color::Black); // fundo preto
+        window.clear(sf::Color::White); // fundo preto
         window.display();
     }
     return 0;
