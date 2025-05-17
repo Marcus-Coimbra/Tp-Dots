@@ -1,16 +1,6 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
-sf::RectangleShape criaRetangulo(int x,int y,int width,int heigth){
-	sf::RectangleShape Retangle(sf::Vector2f(width, heigth));
-	sf::setFillColor(sf::Color::Green);
-
-}
-
-enum Estados{
-	VAZIO,CHEIO
-};
-
 int main() {
 
 	const int Height = 500;
@@ -21,16 +11,6 @@ int main() {
 			sf::Style::Close | sf::Style::Titlebar); // so pro cara não estender a tela...
 	
 	window.setFramerateLimit(90);
-
-	sf::RectangleShape boxes[10][10];
-	Estados matriz[10][10];
-
-		for (int i = 0; i < 10; i++) {
-			for (int j = 0; j < 10; ++j) {
-				boxes[i][j] = criaRetangulo(i,j,dim,dim*2);
-				matriz[i][j] = VAZIO;
-			}
-		}
 
 	// Loop principal
 	while (window.isOpen()) {
