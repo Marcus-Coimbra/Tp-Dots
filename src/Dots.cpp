@@ -5,7 +5,6 @@ int main() {
 
 	const int Height = 500;
 	const int Width = 500;
-	const int dim = 50;
 
 	sf::RenderWindow window(sf::VideoMode(Width, Height), "Dots version.0.0.1",
 			sf::Style::Close | sf::Style::Titlebar); // so pro cara não estender a tela...
