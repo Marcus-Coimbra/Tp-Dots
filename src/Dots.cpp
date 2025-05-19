@@ -8,7 +8,7 @@ int main() {
 
 	sf::RenderWindow window(sf::VideoMode(Width, Height), "Dots version.0.0.1",
 			sf::Style::Close | sf::Style::Titlebar); // so pro cara não estender a tela...
-	
+
 	window.setFramerateLimit(90);
 
 	// Loop principal
