@@ -1,6 +1,10 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
+enum Click{
+	VAZIO, CHEIO
+};
+
 int main() {
 
 	const int Height = 500;
