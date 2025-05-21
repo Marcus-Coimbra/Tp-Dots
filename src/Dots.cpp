@@ -2,10 +2,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/audio.hpp>
 
-enum Click {
-	VAZIO, CHEIO
-};
-
 sf::RectangleShape CriaLinhas
 (int x, int y, int grossura, int comprimento) {
 
@@ -69,18 +65,14 @@ int main() {
 
 	sf::RectangleShape linhasVertical[9][8]; //matriz que desenha linhas verticais
 	sf::RectangleShape linhasHorizontal[8][9]; //matriz que desenha linhas horizontais
-	Click matrizvertical[9][8];
-	Click matrizhorizontal[8][9];
 	for (int i = 0; i < 9; i++) {
 		for (int j = 0; j < 8; j++) {
 			linhasVertical[i][j] = CriaLinhas((i * dim)+185, (j * dim)+40, gros, dim);
-			matrizvertical[i][j] = VAZIO;
 		}
 	}
 	for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 9; j++) {
 				linhasHorizontal[i][j] = CriaLinhas((i * dim)+185, (j * dim)+40, dim, gros);
-				matrizhorizontal[i][j] = VAZIO;
 			}
 		}
 
@@ -91,23 +83,26 @@ int main() {
 		float x = static_cast<float>(mousePos.x);
 		float y = static_cast<float>(mousePos.y);
 
-
 		sf::Event event;
 
 		while (window.pollEvent(event)) {
+
+			//if(event.type == sf::Event::MouseButtonPressed){
+				//int linha = sf::Mouse::getPosition().x / dim;
+				//int coluna = sf::Mouse::getPosition().y / dim;
+			//}
 
 			if (event.type == sf::Event::Closed)
 				window.close();
 
 		}
 
-		window.clear(sf::Color::Red);
+		window.clear(sf::Color::Black);
 
 		DesenhalinhasVerticais(window, linhasVertical, x, y);
 		DesenhalinhasHorizontais(window, linhasHorizontal, x, y);
 
 		window.display();
-		sf::sleep(sf::milliseconds(50.0f));
 	}
 	return 0;
 }
