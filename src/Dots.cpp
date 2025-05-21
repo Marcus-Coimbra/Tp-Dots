@@ -6,9 +6,9 @@ enum Click {
 	VAZIO, CHEIO
 };
 
-sf::RectangleShape CriaLinhas(int x, int y, int width, int height) {
+sf::RectangleShape CriaLinhas(int x, int y, int grossura, int comprimento) {
 
-	sf::RectangleShape retangulo(sf::Vector2f(width, height));
+	sf::RectangleShape retangulo(sf::Vector2f(grossura, comprimento));
 	retangulo.setFillColor(sf::Color::Black);
 	retangulo.setOutlineColor(sf::Color::Green);
 	retangulo.setOutlineThickness(2.0f);
@@ -40,8 +40,8 @@ int main() {
 	const int HEIGHT = 500;
 	const int WIDTH = 800;
 
-	const int comprimento = 50;
-	const int espessura = 5;
+	const int dim = 50;
+	const int gros = 5;
 
 	//janela do jogo
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Dots version.0.0.1",
@@ -53,7 +53,8 @@ int main() {
 	Click matriz[8][8];
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
-			linhasVertical[8][8];
+			linhasVertical[8][8] = CriaLinhas(i * dim, j * dim, gros, dim);
+			matriz[i][j] = VAZIO;
 		}
 	}
 
@@ -67,15 +68,17 @@ int main() {
 
 		while (window.pollEvent(event)) {
 
-			CriaLinhas(x, y, espessura, comprimento);
-
 			if (event.type == sf::Event::Closed)
 				window.close();
 
 		}
 
-		window.clear(sf::Color::White); // fundo preto
+		window.clear(sf::Color::Red);
+
+		Desenhalinhas(window, linhasVertical, x, y);
+
 		window.display();
+		sf::sleep(sf::milliseconds(50.0f));
 	}
 	return 0;
 }
