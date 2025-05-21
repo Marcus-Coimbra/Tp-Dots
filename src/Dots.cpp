@@ -52,7 +52,6 @@ void DesenhalinhasHorizontais
 		}
 	}
 }
-
 int main() {
 
 	const int HEIGHT = 500;
