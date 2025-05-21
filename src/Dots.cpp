@@ -6,23 +6,42 @@ enum Click {
 	VAZIO, CHEIO
 };
 
-sf::RectangleShape CriaLinhas(int x, int y, int grossura, int comprimento) {
+sf::RectangleShape CriaLinhas
+(int x, int y, int grossura, int comprimento) {
 
 	sf::RectangleShape retangulo(sf::Vector2f(grossura, comprimento));
 	retangulo.setFillColor(sf::Color::Black);
 	retangulo.setOutlineColor(sf::Color::Green);
-	retangulo.setOutlineThickness(2.0f);
+	retangulo.setOutlineThickness(1.0f);
 	retangulo.setPosition(x, y);
 
 	return retangulo;
 }
 
-void Desenhalinhas(sf::RenderWindow &window, sf::RectangleShape linhas[8][8],
-		float x, float y) {
+void DesenhalinhasVerticais
+(sf::RenderWindow &window, sf::RectangleShape linhas[9][8],float x, float y) {
+
+	sf::Color cor;
+	for (int i = 0; i < 9; i++) { //linhas na horizontal
+		for (int j = 0; j < 8; j++) {
+			if (linhas[i][j].getGlobalBounds().contains(x, y)) {
+				cor = sf::Color::Yellow;
+			} else {
+				cor = sf::Color::Black;
+			}
+
+			linhas[i][j].setFillColor(cor);
+			window.draw(linhas[i][j]);
+		}
+	}
+}
+
+void DesenhalinhasHorizontais
+(sf::RenderWindow &window, sf::RectangleShape linhas[8][9],float x, float y) {
 
 	sf::Color cor;
 	for (int i = 0; i < 8; i++) { //linhas na horizontal
-		for (int j = 0; j < 8; j++) {
+		for (int j = 0; j < 9; j++) {
 			if (linhas[i][j].getGlobalBounds().contains(x, y)) {
 				cor = sf::Color::Yellow;
 			} else {
@@ -48,21 +67,30 @@ int main() {
 			sf::Style::Close | sf::Style::Titlebar); // so pro cara não estender a tela...
 	window.setFramerateLimit(90);
 
-	sf::RectangleShape linhasVertical[8][8]; //matriz que desenha linhas verticais
-	sf::RectangleShape linhasHorizontal[8][8]; //matriz que desenha linhas horizontais
-	Click matriz[8][8];
-	for (int i = 0; i < 8; i++) {
+	sf::RectangleShape linhasVertical[9][8]; //matriz que desenha linhas verticais
+	sf::RectangleShape linhasHorizontal[8][9]; //matriz que desenha linhas horizontais
+	Click matrizvertical[9][8];
+	Click matrizhorizontal[8][9];
+	for (int i = 0; i < 9; i++) {
 		for (int j = 0; j < 8; j++) {
-			linhasVertical[8][8] = CriaLinhas(i * dim, j * dim, gros, dim);
-			matriz[i][j] = VAZIO;
+			linhasVertical[i][j] = CriaLinhas(i * dim, j * dim, gros, dim);
+			matrizvertical[i][j] = VAZIO;
 		}
 	}
+	for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 9; j++) {
+				linhasHorizontal[i][j] = CriaLinhas(i * dim, j * dim, dim, gros);
+				matrizhorizontal[i][j] = VAZIO;
+			}
+		}
 
 	// Loop principal
 	while (window.isOpen()) {
 
-		float x = sf::Mouse::getPosition().x;
-		float y = sf::Mouse::getPosition().y;
+		sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+		float x = static_cast<float>(mousePos.x);
+		float y = static_cast<float>(mousePos.y);
+
 
 		sf::Event event;
 
@@ -75,7 +103,8 @@ int main() {
 
 		window.clear(sf::Color::Red);
 
-		Desenhalinhas(window, linhasVertical, x, y);
+		DesenhalinhasVerticais(window, linhasVertical, x, y);
+		DesenhalinhasHorizontais(window, linhasHorizontal, x, y);
 
 		window.display();
 		sf::sleep(sf::milliseconds(50.0f));
