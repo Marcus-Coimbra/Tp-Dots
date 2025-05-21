@@ -63,7 +63,7 @@ int main() {
 	const int gros = 5;
 
 	//janela do jogo
-	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Dots version.0.0.1",
+	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Dots version.0.2",
 			sf::Style::Close | sf::Style::Titlebar); // so pro cara não estender a tela...
 	window.setFramerateLimit(90);
 
@@ -73,13 +73,13 @@ int main() {
 	Click matrizhorizontal[8][9];
 	for (int i = 0; i < 9; i++) {
 		for (int j = 0; j < 8; j++) {
-			linhasVertical[i][j] = CriaLinhas(i * dim, j * dim, gros, dim);
+			linhasVertical[i][j] = CriaLinhas((i * dim)+185, (j * dim)+40, gros, dim);
 			matrizvertical[i][j] = VAZIO;
 		}
 	}
 	for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 9; j++) {
-				linhasHorizontal[i][j] = CriaLinhas(i * dim, j * dim, dim, gros);
+				linhasHorizontal[i][j] = CriaLinhas((i * dim)+185, (j * dim)+40, dim, gros);
 				matrizhorizontal[i][j] = VAZIO;
 			}
 		}
