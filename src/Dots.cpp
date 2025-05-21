@@ -25,8 +25,8 @@ void DesenhalinhasVerticais
 	// Inicializa as linhas verticais
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 8; j++) {
-				int posX = (i * (dim + space)) + 275;
-				int posY = (j * (dim + space)) + 75;
+				int posX = (i * (dim + space)) + 275;//275 é a tela - o espaço ultilizado /2
+				int posY = (j * (dim + space)) + 75;//75 é a mesma coisa só que em y
 				linhas[i][j] = CriaLinhas(posX, posY, gros, dim);
 			}
 		}
@@ -34,13 +34,13 @@ void DesenhalinhasVerticais
 	sf::Color cor;
 	for (int i = 0; i < 9; i++) { //linhas na vertical
 		for (int j = 0; j < 8; j++) {
-			if (linhas[i][j].getGlobalBounds().contains(x, y)) {
+			if (linhas[i][j].getGlobalBounds().contains(x, y)) {// comando para pegar a posição do mouse
 				cor = sf::Color::Yellow;
 			} else {
 				cor = sf::Color::White;
 			}
 
-			linhas[i][j].setFillColor(cor);
+			linhas[i][j].setFillColor(cor);// desenha as linhas de acordo com o resultado
 			window.draw(linhas[i][j]);
 		}
 	}
@@ -49,9 +49,9 @@ void DesenhalinhasVerticais
 void DesenhalinhasHorizontais
 (sf::RenderWindow &window, float x, float y) {
 
-	const int dim = 50;// dimensão de espaço entre os pontos
-	const int gros = 10;// espessura das linhas
-	const int space = 5;// espaçamento entre as linhas
+	const int dim = 50;
+	const int gros = 10;
+	const int space = 5;
 
 	sf::RectangleShape linhas[8][9];//matriz que desenha linhas horizontais
 	// Inicializa as linhas horizontais
@@ -96,8 +96,8 @@ void DesenhaPontos
 		// Inicializa os pontos
 			for (int i = 0; i < 9; i++) {
 				for (int j = 0; j < 9; j++) {
-					float x = (i * (dim + space)) + 280;
-					float y = (j * (dim + space)) + 80;
+					float x = (i * (dim + space)) + 280;// o numero só tem 5 a mais que as linhas
+					float y = (j * (dim + space)) + 80;// para ficar no meio delas
 					pontos[i][j] = CriaPonto(x, y, raio);
 				}
 			}
@@ -112,11 +112,12 @@ void DesenhaPontos
 int main() {
 
 	const int HEIGHT = 600;
-	const int WIDTH = 1000;
+	const int WIDTH = 1000;//dimenção da tela
 
 	//janela do jogo
-	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Dots version.1.2",
-			sf::Style::Close | sf::Style::Titlebar); // so pro cara não estender a tela...
+	sf::RenderWindow window
+	(sf::VideoMode(WIDTH, HEIGHT), "Dots version.1.2",sf::Style::Close | sf::Style::Titlebar);
+
 	window.setFramerateLimit(90);
 
 	// Loop principal
