@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/audio.hpp>
+
 enum Click {
 	VAZIO, CHEIO
 };
@@ -52,6 +53,7 @@ void DesenhalinhasHorizontais
 		}
 	}
 }
+
 int main() {
 
 	const int HEIGHT = 500;
