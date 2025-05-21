@@ -20,7 +20,7 @@ Para compilar, foi utilizado SFML2.1, que foi instalado manualmente no projeto.
 
 ## Dependências
 
-- [SFML](https://www.sfml-dev.org/index.php)
+- [SFML]()
 
 ## Funcionalidades
 
