@@ -1,7 +1,6 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/audio.hpp>
-
 enum Click {
 	VAZIO, CHEIO
 };
