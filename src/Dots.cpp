@@ -50,10 +50,10 @@ int main() {
 
 	sf::RectangleShape linhasVertical[8][8]; //matriz que desenha linhas verticais
 	sf::RectangleShape linhasHorizontal[8][8]; //matriz que desenha linhas horizontais
-	 matriz[8][8];
+	Click matriz[8][8];
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
-			linhasVertical[8][8]
+			linhasVertical[8][8];
 		}
 	}
 
