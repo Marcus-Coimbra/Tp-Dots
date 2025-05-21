@@ -3,27 +3,41 @@
 #include <SFML/audio.hpp>
 
 sf::RectangleShape CriaLinhas
-(int x, int y, int grossura, int comprimento) {
+(int x, int y, int grossura, int comprimento){
 
 	sf::RectangleShape retangulo(sf::Vector2f(grossura, comprimento));
 	retangulo.setFillColor(sf::Color::Black);
 	retangulo.setOutlineColor(sf::Color::Green);
-	retangulo.setOutlineThickness(1.0f);
+	retangulo.setOutlineThickness(2.0f);
 	retangulo.setPosition(x, y);
 
 	return retangulo;
 }
 
 void DesenhalinhasVerticais
-(sf::RenderWindow &window, sf::RectangleShape linhas[9][8],float x, float y) {
+(sf::RenderWindow &window, float x, float y){
+
+	const int dim = 50;// dimensão de espaço entre os pontos
+	const int gros = 10;// espessura das linhas
+	const int space = 5;// espaçamento entre as linhas
+
+	sf::RectangleShape linhas[9][8];//matriz que desenha linhas verticais
+	// Inicializa as linhas verticais
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 8; j++) {
+				int posX = (i * (dim + space)) + 275;
+				int posY = (j * (dim + space)) + 75;
+				linhas[i][j] = CriaLinhas(posX, posY, gros, dim);
+			}
+		}
 
 	sf::Color cor;
-	for (int i = 0; i < 9; i++) { //linhas na horizontal
+	for (int i = 0; i < 9; i++) { //linhas na vertical
 		for (int j = 0; j < 8; j++) {
 			if (linhas[i][j].getGlobalBounds().contains(x, y)) {
 				cor = sf::Color::Yellow;
 			} else {
-				cor = sf::Color::Black;
+				cor = sf::Color::White;
 			}
 
 			linhas[i][j].setFillColor(cor);
@@ -33,7 +47,21 @@ void DesenhalinhasVerticais
 }
 
 void DesenhalinhasHorizontais
-(sf::RenderWindow &window, sf::RectangleShape linhas[8][9],float x, float y) {
+(sf::RenderWindow &window, float x, float y) {
+
+	const int dim = 50;// dimensão de espaço entre os pontos
+	const int gros = 10;// espessura das linhas
+	const int space = 5;// espaçamento entre as linhas
+
+	sf::RectangleShape linhas[8][9];//matriz que desenha linhas horizontais
+	// Inicializa as linhas horizontais
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 9; j++) {
+				int posX = (i * (dim + space)) + 275;
+				int posY = (j * (dim + space)) + 75;
+				linhas[i][j] = CriaLinhas(posX, posY, dim, gros);
+			}
+		}
 
 	sf::Color cor;
 	for (int i = 0; i < 8; i++) { //linhas na horizontal
@@ -41,7 +69,7 @@ void DesenhalinhasHorizontais
 			if (linhas[i][j].getGlobalBounds().contains(x, y)) {
 				cor = sf::Color::Yellow;
 			} else {
-				cor = sf::Color::Black;
+				cor = sf::Color::White;
 			}
 
 			linhas[i][j].setFillColor(cor);
@@ -50,31 +78,46 @@ void DesenhalinhasHorizontais
 	}
 }
 
-int main() {
+sf::CircleShape CriaPonto
+(float x, float y, float raio) {
+	sf::CircleShape ponto(raio);
+	ponto.setFillColor(sf::Color::Black);
+	ponto.setPosition(x - raio, y - raio); // para centralizar
+	return ponto;
+}
 
-	const int HEIGHT = 500;
-	const int WIDTH = 800;
+void DesenhaPontos
+(sf::RenderWindow &window){
+	const int dim = 50;// dimensão de espaço entre os pontos
+	const int space = 5;// espaçamento entre os pontos
+	const float raio = 10.0f;// raio dos pontos
 
-	const int dim = 50;
-	const int gros = 5;
-
-	//janela do jogo
-	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Dots version.0.2",
-			sf::Style::Close | sf::Style::Titlebar); // so pro cara não estender a tela...
-	window.setFramerateLimit(90);
-
-	sf::RectangleShape linhasVertical[9][8]; //matriz que desenha linhas verticais
-	sf::RectangleShape linhasHorizontal[8][9]; //matriz que desenha linhas horizontais
+		sf::CircleShape pontos[9][9];//matriz que desenha os pontos
+		// Inicializa os pontos
+			for (int i = 0; i < 9; i++) {
+				for (int j = 0; j < 9; j++) {
+					float x = (i * (dim + space)) + 280;
+					float y = (j * (dim + space)) + 80;
+					pontos[i][j] = CriaPonto(x, y, raio);
+				}
+			}
 	for (int i = 0; i < 9; i++) {
-		for (int j = 0; j < 8; j++) {
-			linhasVertical[i][j] = CriaLinhas((i * dim)+185, (j * dim)+40, gros, dim);
+		for (int j = 0; j < 9; j++) {
+			window.draw(pontos[i][j]);
 		}
 	}
-	for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 9; j++) {
-				linhasHorizontal[i][j] = CriaLinhas((i * dim)+185, (j * dim)+40, dim, gros);
-			}
-		}
+
+}
+
+int main() {
+
+	const int HEIGHT = 600;
+	const int WIDTH = 1000;
+
+	//janela do jogo
+	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Dots version.1.2",
+			sf::Style::Close | sf::Style::Titlebar); // so pro cara não estender a tela...
+	window.setFramerateLimit(90);
 
 	// Loop principal
 	while (window.isOpen()) {
@@ -87,20 +130,16 @@ int main() {
 
 		while (window.pollEvent(event)) {
 
-			//if(event.type == sf::Event::MouseButtonPressed){
-				//int linha = sf::Mouse::getPosition().x / dim;
-				//int coluna = sf::Mouse::getPosition().y / dim;
-			//}
-
 			if (event.type == sf::Event::Closed)
 				window.close();
 
 		}
 
-		window.clear(sf::Color::Black);
+		window.clear(sf::Color::White);
 
-		DesenhalinhasVerticais(window, linhasVertical, x, y);
-		DesenhalinhasHorizontais(window, linhasHorizontal, x, y);
+		DesenhalinhasVerticais(window, x, y);
+		DesenhalinhasHorizontais(window, x, y);
+		DesenhaPontos(window);
 
 		window.display();
 	}
