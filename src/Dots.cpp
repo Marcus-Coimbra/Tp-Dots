@@ -7,8 +7,6 @@ sf::RectangleShape CriaLinhas
 
 	sf::RectangleShape retangulo(sf::Vector2f(grossura, comprimento));
 	retangulo.setFillColor(sf::Color::Black);
-	retangulo.setOutlineColor(sf::Color::Green);
-	retangulo.setOutlineThickness(2.0f);
 	retangulo.setPosition(x, y);
 
 	return retangulo;
@@ -17,16 +15,16 @@ sf::RectangleShape CriaLinhas
 void DesenhalinhasVerticais
 (sf::RenderWindow &window, float x, float y){
 
-	const int dim = 50;// dimensão de espaço entre os pontos
-	const int gros = 10;// espessura das linhas
-	const int space = 5;// espaçamento entre as linhas
+	const int dim = 40;// dimensão de espaço entre os pontos
+	const int gros = 5;// espessura das linhas
+	const int space = 3*gros;// espaçamento entre as linhas
 
 	sf::RectangleShape linhas[9][8];//matriz que desenha linhas verticais
 	// Inicializa as linhas verticais
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 8; j++) {
-				int posX = (i * (dim + space)) + 275;//275 é a tela - o espaço ultilizado /2
-				int posY = (j * (dim + space)) + 75;//75 é a mesma coisa só que em y
+				int posX = (i*dim)+(i*space) + 275;
+				int posY = (j*dim)+(j*space) + 80 + gros;
 				linhas[i][j] = CriaLinhas(posX, posY, gros, dim);
 			}
 		}
@@ -49,16 +47,16 @@ void DesenhalinhasVerticais
 void DesenhalinhasHorizontais
 (sf::RenderWindow &window, float x, float y) {
 
-	const int dim = 50;
-	const int gros = 10;
-	const int space = 5;
+	const int dim = 40;
+	const int gros = 5;
+	const int space = 3*gros;
 
 	sf::RectangleShape linhas[8][9];//matriz que desenha linhas horizontais
 	// Inicializa as linhas horizontais
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 9; j++) {
-				int posX = (i * (dim + space)) + 275;
-				int posY = (j * (dim + space)) + 75;
+				int posX = (i*dim)+(i*space) + 280 + gros;
+				int posY = (j*dim)+(j*space) + 75;
 				linhas[i][j] = CriaLinhas(posX, posY, dim, gros);
 			}
 		}
@@ -90,14 +88,14 @@ void DesenhaPontos
 (sf::RenderWindow &window){
 	const int dim = 50;// dimensão de espaço entre os pontos
 	const int space = 5;// espaçamento entre os pontos
-	const float raio = 10.0f;// raio dos pontos
+	const float raio = 8.0f;// raio dos pontos
 
 		sf::CircleShape pontos[9][9];//matriz que desenha os pontos
 		// Inicializa os pontos
 			for (int i = 0; i < 9; i++) {
 				for (int j = 0; j < 9; j++) {
-					float x = (i * (dim + space)) + 280;// o numero só tem 5 a mais que as linhas
-					float y = (j * (dim + space)) + 80;// para ficar no meio delas
+					float x = (i * (dim + space)) + 275 + raio/4;// o numero só tem 5 a mais que as linhas
+					float y = (j * (dim + space)) + 75 + raio/4;// para ficar no meio delas
 					pontos[i][j] = CriaPonto(x, y, raio);
 				}
 			}
