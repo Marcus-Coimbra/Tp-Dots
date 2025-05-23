@@ -21,8 +21,8 @@ sf::RectangleShape CriaLinhas(int x, int y, int grossura, int comprimento) {
 
 	sf::RectangleShape retangulo(sf::Vector2f(grossura, comprimento));
 	retangulo.setFillColor(sf::Color(0, 0, 0));
-	retangulo.setOutlineColor(sf::Color::Green);
-	retangulo.setOutlineThickness(2.0f);
+	//retangulo.setOutlineColor(sf::Color::Green);
+	//retangulo.setOutlineThickness(2.0f);
 	retangulo.setPosition(x, y);
 
 	return retangulo;
@@ -37,9 +37,9 @@ sf::CircleShape CriaPonto(float x, float y, float raio) {
 
 void DesenhalinhasVerticais(sf::RenderWindow &window,Clik (&matriz)[13][13], float x, float y) {
 
-	const int dim = 40;	// dimensão de espaço das linhas
+	const int dim = 50;	// dimensão de espaço das linhas
 	const int gros = 8;	// grossura das linhas
-	const int space = 3 * gros;	// espaçamento entre as linhas
+	const int space = 2 * gros;	// espaçamento entre as linhas
 
 	sf::RectangleShape linhas[7][6];	//matriz que desenha linhas verticais
 	// Inicializa as linhas verticais
@@ -70,9 +70,9 @@ void DesenhalinhasVerticais(sf::RenderWindow &window,Clik (&matriz)[13][13], flo
 
 void DesenhalinhasHorizontais(sf::RenderWindow &window,Clik (&matriz)[13][13], float x, float y) {
 
-	const int dim = 40;
+	const int dim = 50;
 	const int gros = 8;
-	const int space = 3 * gros;
+	const int space = 2 * gros;
 
 	sf::RectangleShape linhas[6][7]; //matriz que desenha linhas horizontais
 	// Inicializa as linhas horizontais
@@ -104,8 +104,8 @@ void DesenhalinhasHorizontais(sf::RenderWindow &window,Clik (&matriz)[13][13], f
 
 void DesenhaPontos(sf::RenderWindow &window) {
 	const int dim = 50; // dimensão de espaço entre os pontos
-	const int space = 14; // espaçamento entre os pontos
-	const float raio = 14.0f; // raio dos pontos
+	const int space = 16; // espaçamento entre os pontos
+	const float raio = 11.0f; // raio dos pontos
 	const int gros = 3;	// grossura das linhas pela metade para centralizar
 
 	sf::CircleShape pontos[7][7]; //matriz que desenha os pontos
@@ -113,8 +113,7 @@ void DesenhaPontos(sf::RenderWindow &window) {
 	for (int i = 0; i < 7; i++) {
 		for (int j = 0; j < 7; j++) {
 			float x = (i * dim) + (i * space) + 375 + gros;
-			float y = (j * dim) + (j * space) + 75 + gros;;
-			;		// para ficar no meio delas
+			float y = (j * dim) + (j * space) + 75 + gros;// para ficar no meio delas
 			pontos[i][j] = CriaPonto(x, y, raio);
 		}
 	}
