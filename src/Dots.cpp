@@ -6,7 +6,9 @@ sf::RectangleShape CriaLinhas
 (int x, int y, int grossura, int comprimento){
 
 	sf::RectangleShape retangulo(sf::Vector2f(grossura, comprimento));
-	retangulo.setFillColor(sf::Color::Black);
+	retangulo.setFillColor(sf::Color(0,0,0));
+	//retangulo.setOutlineColor(sf::Color::Green);
+	//retangulo.setOutlineThickness(2.0f);
 	retangulo.setPosition(x, y);
 
 	return retangulo;
@@ -16,7 +18,7 @@ void DesenhalinhasVerticais
 (sf::RenderWindow &window, float x, float y){
 
 	const int dim = 40;// dimensão de espaço entre os pontos
-	const int gros = 5;// espessura das linhas
+	const int gros = 6;// espessura das linhas
 	const int space = 3*gros;// espaçamento entre as linhas
 
 	sf::RectangleShape linhas[9][8];//matriz que desenha linhas verticais
@@ -33,9 +35,9 @@ void DesenhalinhasVerticais
 	for (int i = 0; i < 9; i++) { //linhas na vertical
 		for (int j = 0; j < 8; j++) {
 			if (linhas[i][j].getGlobalBounds().contains(x, y)) {// comando para pegar a posição do mouse
-				cor = sf::Color::Yellow;
+				cor = sf::Color(80,80,80);
 			} else {
-				cor = sf::Color::White;
+				cor = sf::Color(255,255,255);
 			}
 
 			linhas[i][j].setFillColor(cor);// desenha as linhas de acordo com o resultado
@@ -48,7 +50,7 @@ void DesenhalinhasHorizontais
 (sf::RenderWindow &window, float x, float y) {
 
 	const int dim = 40;
-	const int gros = 5;
+	const int gros = 6;
 	const int space = 3*gros;
 
 	sf::RectangleShape linhas[8][9];//matriz que desenha linhas horizontais
@@ -65,7 +67,7 @@ void DesenhalinhasHorizontais
 	for (int i = 0; i < 8; i++) { //linhas na horizontal
 		for (int j = 0; j < 9; j++) {
 			if (linhas[i][j].getGlobalBounds().contains(x, y)) {
-				cor = sf::Color::Yellow;
+				cor = sf::Color(80,80,80);
 			} else {
 				cor = sf::Color::White;
 			}
@@ -87,15 +89,15 @@ sf::CircleShape CriaPonto
 void DesenhaPontos
 (sf::RenderWindow &window){
 	const int dim = 50;// dimensão de espaço entre os pontos
-	const int space = 5;// espaçamento entre os pontos
-	const float raio = 8.0f;// raio dos pontos
+	const int space = 8;// espaçamento entre os pontos
+	const float raio = 9.0f;// raio dos pontos
 
 		sf::CircleShape pontos[9][9];//matriz que desenha os pontos
 		// Inicializa os pontos
 			for (int i = 0; i < 9; i++) {
 				for (int j = 0; j < 9; j++) {
-					float x = (i * (dim + space)) + 275 + raio/4;// o numero só tem 5 a mais que as linhas
-					float y = (j * (dim + space)) + 75 + raio/4;// para ficar no meio delas
+					float x = (i*dim)+(i*space) + 277;// o numero só tem 5 a mais que as linhas
+					float y = (j*dim)+(j*space) + 77;;// para ficar no meio delas
 					pontos[i][j] = CriaPonto(x, y, raio);
 				}
 			}
@@ -114,7 +116,7 @@ int main() {
 
 	//janela do jogo
 	sf::RenderWindow window
-	(sf::VideoMode(WIDTH, HEIGHT), "Dots version.1.2",sf::Style::Close | sf::Style::Titlebar);
+	(sf::VideoMode(WIDTH, HEIGHT), "Dots version.0.9",sf::Style::Close | sf::Style::Titlebar);
 
 	window.setFramerateLimit(90);
 
