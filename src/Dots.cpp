@@ -123,9 +123,8 @@ int main() {
 	// Loop principal
 	while (window.isOpen()) {
 
-		sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-		float x = static_cast<float>(mousePos.x);
-		float y = static_cast<float>(mousePos.y);
+		float x = sf::Mouse::getPosition(window).x;
+		float y = sf::Mouse::getPosition(window).y;
 
 		sf::Event event;
 
