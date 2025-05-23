@@ -2,25 +2,30 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/audio.hpp>
 
-enum Clik{
-	VAZIO,CHEIO
+enum Clik {
+	VAZIO, CHEIO
 };
 
-void Eventos(sf::RenderWindow *window){
+void Eventos(sf::RenderWindow *window) {
 	sf::Event event;
 
-			while ((*window).pollEvent(event)) {
+	while ((*window).pollEvent(event)) {
 
-				if (event.type == sf::Event::Closed)
-					(*window).close();
+		if (event.type == sf::Event::MouseButtonPressed) {
 
-			}
+		}
+
+		if (event.type == sf::Event::Closed)
+			(*window).close();
+
+	}
 }
 
-sf::RectangleShape CriaLinhas(int x, int y, int grossura, int comprimento) {
+sf::RectangleShape CriaLinhas(int x, int y, int grossura, int comprimento,
+		sf::Color cor) {
 
 	sf::RectangleShape retangulo(sf::Vector2f(grossura, comprimento));
-	retangulo.setFillColor(sf::Color(0, 0, 0));
+	retangulo.setFillColor(cor);
 	//retangulo.setOutlineColor(sf::Color::Green);
 	//retangulo.setOutlineThickness(2.0f);
 	retangulo.setPosition(x, y);
@@ -35,31 +40,34 @@ sf::CircleShape CriaPonto(float x, float y, float raio) {
 	return ponto;
 }
 
-void DesenhalinhasVerticais(sf::RenderWindow &window,Clik (&matriz)[13][13], float x, float y) {
+void DesenhalinhasVerticais(sf::RenderWindow &window, Clik (&matriz)[13][13],
+		float x, float y) {
 
 	const int dim = 50;	// dimensão de espaço das linhas
 	const int gros = 8;	// grossura das linhas
 	const int space = 2 * gros;	// espaçamento entre as linhas
+	sf::Color cor ;
 
 	sf::RectangleShape linhas[7][6];	//matriz que desenha linhas verticais
 	// Inicializa as linhas verticais
 	for (int i = 0; i < 7; i++) {
 		for (int j = 0; j < 6; j++) {
 			int posX = (i * dim) + (i * space) + 375;
-			int posY = (j * dim) + (j * space) + 80 + gros;//5 a mais que as linhas verticais para ter espaço em branco entre eles
+			int posY = (j * dim) + (j * space) + 80 + gros;	//5 a mais que as linhas verticais para ter espaço em branco entre eles
 
 			matriz[i][j] = VAZIO;
-			linhas[i][j] = CriaLinhas(posX, posY, gros, dim);
+			cor = sf::Color::White;
+
+			linhas[i][j] = CriaLinhas(posX, posY, gros, dim, cor);
 		}
 	}
 
-	sf::Color cor;
 	for (int i = 0; i < 7; i++) { //linhas na vertical
 		for (int j = 0; j < 6; j++) {
 			if (linhas[i][j].getGlobalBounds().contains(x, y)) { // comando para pegar a posição do mouse
-				cor = sf::Color(80, 80, 80);
+				cor = sf::Color(0, 0, 0,100);
 			} else {
-				cor = sf::Color(255, 255, 255);
+				cor = sf::Color::White;
 			}
 
 			linhas[i][j].setFillColor(cor); // desenha as linhas de acordo com o resultado
@@ -68,11 +76,13 @@ void DesenhalinhasVerticais(sf::RenderWindow &window,Clik (&matriz)[13][13], flo
 	}
 }
 
-void DesenhalinhasHorizontais(sf::RenderWindow &window,Clik (&matriz)[13][13], float x, float y) {
+void DesenhalinhasHorizontais(sf::RenderWindow &window, Clik (&matriz)[13][13],
+		float x, float y) {
 
 	const int dim = 50;
 	const int gros = 8;
 	const int space = 2 * gros;
+	sf::Color cor ;
 
 	sf::RectangleShape linhas[6][7]; //matriz que desenha linhas horizontais
 	// Inicializa as linhas horizontais
@@ -81,17 +91,17 @@ void DesenhalinhasHorizontais(sf::RenderWindow &window,Clik (&matriz)[13][13], f
 			int posX = (i * dim) + (i * space) + 380 + gros;
 			int posY = (j * dim) + (j * space) + 75;
 
+			matriz[i + 7][j + 6] = VAZIO; //gambiarra para colocacar todas as linhas na mesma matriz
+			cor = sf::Color::White;
 
-			matriz[i+7][j+6] = VAZIO; //gambiarra para colocacar todas as linhas na mesma matriz
-			linhas[i][j] = CriaLinhas(posX, posY, dim, gros);
+			linhas[i][j] = CriaLinhas(posX, posY, dim, gros, cor);
 		}
 	}
 
-	sf::Color cor;
 	for (int i = 0; i < 6; i++) { //linhas na horizontal
 		for (int j = 0; j < 7; j++) {
 			if (linhas[i][j].getGlobalBounds().contains(x, y)) {
-				cor = sf::Color(80, 80, 80);
+				cor = sf::Color(0 ,0 ,0 ,100);
 			} else {
 				cor = sf::Color::White;
 			}
@@ -105,24 +115,18 @@ void DesenhalinhasHorizontais(sf::RenderWindow &window,Clik (&matriz)[13][13], f
 void DesenhaPontos(sf::RenderWindow &window) {
 	const int dim = 50; // dimensão de espaço entre os pontos
 	const int space = 16; // espaçamento entre os pontos
-	const float raio = 11.0f; // raio dos pontos
-	const int gros = 3;	// grossura das linhas pela metade para centralizar
+	const float raio = 10.0f; // raio dos pontos
 
 	sf::CircleShape pontos[7][7]; //matriz que desenha os pontos
 	// Inicializa os pontos
 	for (int i = 0; i < 7; i++) {
 		for (int j = 0; j < 7; j++) {
-			float x = (i * dim) + (i * space) + 375 + gros;
-			float y = (j * dim) + (j * space) + 75 + gros;// para ficar no meio delas
+			float x = (i * dim) + (i * space) + 379;
+			float y = (j * dim) + (j * space) + 79;//4 de diferença é metade da grossura para centralizar
 			pontos[i][j] = CriaPonto(x, y, raio);
-		}
-	}
-	for (int i = 0; i < 7; i++) {
-		for (int j = 0; j < 7; j++) {
 			window.draw(pontos[i][j]);
 		}
 	}
-
 }
 
 int main() {
@@ -148,8 +152,8 @@ int main() {
 
 		window.clear(sf::Color::White);
 
-		DesenhalinhasVerticais(window,matriz, mouseX, mouseY);
-		DesenhalinhasHorizontais(window,matriz, mouseX, mouseY);
+		DesenhalinhasVerticais(window, matriz, mouseX, mouseY);
+		DesenhalinhasHorizontais(window, matriz, mouseX, mouseY);
 		DesenhaPontos(window);
 
 		window.display();
