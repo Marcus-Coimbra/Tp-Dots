@@ -61,12 +61,20 @@ public:
 	}
 
 	void atualizar() {
-		if (ponto == CHEIO) {
-			shape.setFillColor(sf::Color::Red);
-		} else {
-			shape.setFillColor(sf::Color(0, 0, 255)); // transparente
+			if (1){
+				if (ponto == CHEIO) {
+					shape.setFillColor(sf::Color::Blue);
+				} else {
+					shape.setFillColor(sf::Color(0, 0, 0, 0));
+				}
+			} else {
+				if (ponto == CHEIO) {
+					shape.setFillColor(sf::Color::Blue);
+				} else {
+					shape.setFillColor(sf::Color(0, 0, 0, 0)); // transparente
+				}
+			}
 		}
-	}
 
 	void checarPonto() {
 		if(1){
