@@ -61,23 +61,23 @@ public:
 	}
 
 	void atualizar() {
-			if (1){
-				if (ponto == CHEIO) {
-					shape.setFillColor(sf::Color::Blue);
-				} else {
-					shape.setFillColor(sf::Color(0, 0, 0, 0));
-				}
+		if (1) {
+			if (ponto == CHEIO) {
+				shape.setFillColor(sf::Color::Blue);
 			} else {
-				if (ponto == CHEIO) {
-					shape.setFillColor(sf::Color::Blue);
-				} else {
-					shape.setFillColor(sf::Color(0, 0, 0, 0)); // transparente
-				}
+				shape.setFillColor(sf::Color(0, 0, 0, 0));
+			}
+		} else {
+			if (ponto == CHEIO) {
+				shape.setFillColor(sf::Color::Blue);
+			} else {
+				shape.setFillColor(sf::Color(0, 0, 0, 0)); // transparente
 			}
 		}
+	}
 
 	void checarPonto() {
-		if(1){
+		if (1) {
 
 		}
 	}
@@ -123,7 +123,7 @@ public:
 				float x = (i * dim) + (i * space) + 375 + gros;
 				float y = (j * dim) + (j * space) + 75 + gros;
 
-				Quadrado novoQuadrado(x, y, (dim + gros));// + gros e pra completar o espaço faltante
+				Quadrado novoQuadrado(x, y, (dim + gros)); // + gros e pra completar o espaço faltante
 				Quadrados.push_back(novoQuadrado);
 			}
 		}
