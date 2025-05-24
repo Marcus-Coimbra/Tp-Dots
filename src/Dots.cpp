@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-#include <Vector>
+#include <cstring>
 
 using namespace std;
 
@@ -45,7 +45,8 @@ public:
 
 	void checarClique(float mouseX, float mouseY) {
 		//Se o mouse estiver sobre a linha quando clicado, muda seu estado para CHEIO
-		if (shape.getGlobalBounds().contains(mouseX, mouseY)) {
+		if (shape.getGlobalBounds().contains(mouseX, mouseY)
+				&& estado == VAZIO) { // garante que só possa ser atribuido valor 1 vez
 			estado = CHEIO;
 		}
 	}
@@ -98,7 +99,6 @@ public:
 				&& linhaDireita->estado == CHEIO) {
 			ponto = CHEIO;
 		}
-
 	}
 
 	void desenhar(sf::RenderWindow &window) {
@@ -216,6 +216,18 @@ public:
 				window.draw(ponto);
 			}
 		}
+	}
+};
+
+class Player {
+public:
+
+	string nome;
+	sf::Color cor;
+
+	Player() :
+			nome("Player1"), cor(sf::Color::Blue) {
+
 	}
 };
 
