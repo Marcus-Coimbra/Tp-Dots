@@ -48,10 +48,53 @@ public:
 	}
 };
 
+class Quadrado {
+public:
+	sf::RectangleShape shape;
+	Clik ponto;
+
+	Linha *cima;
+	Linha *baixo;
+	Linha *esquerda;
+	Linha *direita;
+
+	Quadrado(float x, float y, float dim) {
+		shape.setSize(sf::Vector2f(dim, dim));
+		shape.setPosition(x, y);
+		shape.setFillColor(sf::Color(0, 0, 0, 0)); //cor transparente para se juntar a tela indenpendete de sua cor
+		ponto = VAZIO;
+
+		// Inicializar ponteiros
+		cima = baixo = esquerda = direita = nullptr;
+	}
+
+	void atualizar() {
+		if (ponto == CHEIO) {
+			shape.setFillColor(sf::Color::Red);
+		} else {
+			shape.setFillColor(sf::Color(0, 0, 0, 0)); // transparente
+		}
+	}
+
+	void checarPonto() {
+		if (cima && baixo && esquerda && direita) {
+			if (cima->estado == CHEIO && baixo->estado == CHEIO
+					&& esquerda->estado == CHEIO && direita->estado == CHEIO) {
+				ponto = CHEIO;
+			}
+		}
+	}
+
+	void desenhar(sf::RenderWindow &window) {
+		window.draw(shape);
+	}
+};
+
 class Tabuleiro {
 private:
 	vector<Linha> linhasVerticais;
 	vector<Linha> linhasHorizontais;
+	vector<Quadrado> Quadrados;
 
 	const int dim = 50;
 	const int gros = 8;
@@ -78,6 +121,27 @@ public:
 				linhasHorizontais.push_back(novaLinha);
 			}
 		}
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 6; j++) {
+				float x = (i * dim) + (i * space) + 375 + gros;
+				float y = (j * dim) + (j * space) + 75 + gros;
+
+				Quadrado novoQuadrado(x, y, (dim + gros)); // + gros e pra completar o espaço faltante
+
+				// Cálculo do índice das linhas correspondentes
+				int idxHorizontalCima = j * 7;
+				int idxHorizontalBaixo = (j + 1) * 7;
+				int idxVerticalEsquerda = i * 6;
+				int idxVerticalDireita = (i + 1) * 6;
+
+				novoQuadrado.cima = &linhasHorizontais[idxHorizontalCima];
+				novoQuadrado.baixo = &linhasHorizontais[idxHorizontalBaixo];
+				novoQuadrado.esquerda = &linhasVerticais[idxVerticalEsquerda];
+				novoQuadrado.direita = &linhasVerticais[idxVerticalDireita];
+
+				Quadrados.push_back(novoQuadrado);
+			}
+		}
 	}
 
 	void atualizar(float mouseX, float mouseY) {
@@ -86,6 +150,9 @@ public:
 		}
 		for (int i = 0; i < (int) linhasHorizontais.size(); i++) {
 			linhasHorizontais[i].atualizar(mouseX, mouseY);
+		}
+		for (int i = 0; i < (int) Quadrados.size(); i++) {
+			Quadrados[i].atualizar();
 		}
 	}
 
@@ -96,6 +163,9 @@ public:
 		for (int i = 0; i < (int) linhasHorizontais.size(); i++) {
 			linhasHorizontais[i].checarClique(mouseX, mouseY);
 		}
+		for (int i = 0; i < (int) Quadrados.size(); i++) {
+			Quadrados[i].checarPonto();
+		}
 	}
 
 	void desenhar(sf::RenderWindow &window) {
@@ -104,6 +174,9 @@ public:
 		}
 		for (int i = 0; i < (int) linhasHorizontais.size(); i++) {
 			linhasHorizontais[i].desenhar(window);
+		}
+		for (int i = 0; i < (int) Quadrados.size(); i++) {
+			Quadrados[i].desenhar(window);
 		}
 
 		const float raio = 10.0f;
@@ -128,7 +201,7 @@ private:
 	Tabuleiro tabuleiro;
 
 public:
-	Jogo() :
+	Jogo() : //lista de inicialização para membro janela
 			window(sf::VideoMode(1000, 600), "Dots version 0.9",
 					sf::Style::Close | sf::Style::Titlebar) {
 		window.setFramerateLimit(90);
@@ -137,17 +210,20 @@ public:
 	void executar() {
 		while (window.isOpen()) {
 			sf::Event event;
-			float mouseX = sf::Mouse::getPosition(window).x;
-			float mouseY = sf::Mouse::getPosition(window).y;
 
 			while (window.pollEvent(event)) {
 				if (event.type == sf::Event::Closed)
 					window.close();
 
-				if (event.type == sf::Event::MouseButtonPressed)
+				if (event.type == sf::Event::MouseButtonPressed) {
+					float mouseX = sf::Mouse::getPosition(window).x;
+					float mouseY = sf::Mouse::getPosition(window).y;
 					tabuleiro.checarClique(mouseX, mouseY);
+				}
 			}
 
+			float mouseX = sf::Mouse::getPosition(window).x;
+			float mouseY = sf::Mouse::getPosition(window).y;
 			tabuleiro.atualizar(mouseX, mouseY);
 
 			window.clear(sf::Color(143, 188, 194));
