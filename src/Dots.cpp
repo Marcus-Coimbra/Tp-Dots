@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <Vector>
 
 using namespace std;
 
@@ -91,13 +92,13 @@ public:
 	}
 
 	void checarPonto() {
-		if (linhaSuperior && linhaInferior && linhaEsquerda && linhaDireita) { // verifica as 4 linhas entorno do qudrado
-			if (linhaSuperior->estado == CHEIO && linhaInferior->estado == CHEIO
-					&& linhaEsquerda->estado == CHEIO
-					&& linhaDireita->estado == CHEIO) {
-				ponto = CHEIO;
-			}
+		// verifica as 4 linhas entorno do qudrado
+		if (linhaSuperior->estado == CHEIO && linhaInferior->estado == CHEIO
+				&& linhaEsquerda->estado == CHEIO
+				&& linhaDireita->estado == CHEIO) {
+			ponto = CHEIO;
 		}
+
 	}
 
 	void desenhar(sf::RenderWindow &window) {
@@ -109,6 +110,7 @@ class Tabuleiro {
 private:
 	Linha linhasVerticais[7][6];
 	Linha linhasHorizontais[6][7];
+
 	Quadrado quadrados[6][6];
 
 	const int dim = 50;
@@ -143,14 +145,14 @@ public:
 			}
 		}
 		for (int i = 0; i < 6; i++) {
-					for (int j = 0; j < 6; j++) {
-						// Cálculo para verificar linhas horizontais e verticais
-						quadrados[i][j].linhaSuperior = &linhasHorizontais[i][j];
-						quadrados[i][j].linhaInferior = &linhasHorizontais[i][j+1];
-						quadrados[i][j].linhaEsquerda = &linhasVerticais[i][j];
-						quadrados[i][j].linhaDireita = &linhasVerticais[i+1][j];
-					}
-				}
+			for (int j = 0; j < 6; j++) {
+				// Cálculo para verificar linhas horizontais e verticais
+				quadrados[i][j].linhaSuperior = &linhasHorizontais[i][j];
+				quadrados[i][j].linhaInferior = &linhasHorizontais[i][j + 1];
+				quadrados[i][j].linhaEsquerda = &linhasVerticais[i][j];
+				quadrados[i][j].linhaDireita = &linhasVerticais[i + 1][j];
+			}
+		}
 	}
 
 	void atualizar(float mouseX, float mouseY) {
@@ -245,7 +247,7 @@ public:
 					tabuleiro.checarClique(mouseX, mouseY);
 			}
 
-			window.clear(sf::Color(143, 188, 194));
+			window.clear(sf::Color(133, 199, 194));
 			tabuleiro.desenhar(window);
 			window.display();
 		}
