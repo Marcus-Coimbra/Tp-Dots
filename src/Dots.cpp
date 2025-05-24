@@ -1,6 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
+using namespace std;
+
 enum Clik {
 	VAZIO, CHEIO
 };
@@ -13,7 +15,7 @@ public:
 	Linha(float x, float y, float width, float height) {
 		shape.setSize(sf::Vector2f(width, height));
 		shape.setPosition(x, y);
-		shape.setFillColor(sf::Color::White);
+		shape.setFillColor(sf::Color(0, 0, 0, 0)); //cor transparente para se juntar a tela indenpendete de sua cor
 		estado = VAZIO;
 	}
 
@@ -23,19 +25,19 @@ public:
 			if (estado == CHEIO) {
 				shape.setFillColor(sf::Color::Black);
 			} else {
-				shape.setFillColor(sf::Color(0, 0, 0, 100));
+				shape.setFillColor(sf::Color(0, 0, 0, 100)); // semi-transparente
 			}
-		//mesmo see
 		} else {
 			if (estado == CHEIO) {
 				shape.setFillColor(sf::Color::Black);
 			} else {
-				shape.setFillColor(sf::Color::White);
+				shape.setFillColor(sf::Color(0, 0, 0, 0)); // transparente
 			}
 		}
 	}
 
 	void checarClique(float mouseX, float mouseY) {
+		//Se o mouse estiver sobre a linha quando clicado, muda seu estado para CHEIO
 		if (shape.getGlobalBounds().contains(mouseX, mouseY)) {
 			estado = CHEIO;
 		}
@@ -48,8 +50,8 @@ public:
 
 class Tabuleiro {
 private:
-	std::vector<Linha> linhasVerticais;
-	std::vector<Linha> linhasHorizontais;
+	vector<Linha> linhasVerticais;
+	vector<Linha> linhasHorizontais;
 
 	const int dim = 50;
 	const int gros = 8;
@@ -61,8 +63,9 @@ public:
 			for (int j = 0; j < 6; j++) {
 				float x = (i * dim) + (i * space) + 375;
 				float y = (j * dim) + (j * space) + 80 + gros;
+
 				Linha novaLinha(x, y, gros, dim);
-				linhasVerticais.push_back(novaLinha);
+				linhasVerticais.push_back(novaLinha); //cria uma linha apos a outra
 			}
 		}
 
@@ -70,6 +73,7 @@ public:
 			for (int j = 0; j < 7; j++) {
 				float x = (i * dim) + (i * space) + 380 + gros;
 				float y = (j * dim) + (j * space) + 75;
+
 				Linha novaLinha(x, y, dim, gros);
 				linhasHorizontais.push_back(novaLinha);
 			}
@@ -108,8 +112,10 @@ public:
 				float x = (i * dim) + (i * space) + 379;
 				float y = (j * dim) + (j * space) + 79;
 				sf::CircleShape ponto(raio);
-				ponto.setFillColor(sf::Color::Black);
+
+				ponto.setFillColor(sf::Color(255, 255, 255));
 				ponto.setPosition(x - raio, y - raio);
+
 				window.draw(ponto);
 			}
 		}
@@ -144,7 +150,7 @@ public:
 
 			tabuleiro.atualizar(mouseX, mouseY);
 
-			window.clear(sf::Color::White);
+			window.clear(sf::Color(143, 188, 194));
 			tabuleiro.desenhar(window);
 			window.display();
 		}
