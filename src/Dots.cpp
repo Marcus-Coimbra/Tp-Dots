@@ -444,7 +444,7 @@ public:
 
 			// Jogada do bot (Player 2)
 			if (jogadorAtual == &jogador2) {
-				sf::sleep(sf::milliseconds(500)); // Pequeno delay para simular pensamento
+				sf::sleep(sf::milliseconds(700)); // Pequeno delay para simular pensamento
 				jogadaBot();
 			}
 		}
