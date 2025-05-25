@@ -9,6 +9,7 @@ using namespace std;
 enum Clik {
 	VAZIO, CHEIO
 };
+
 enum EstadoPonto {
 	NENHUM, JOGADOR1, JOGADOR2
 };
@@ -294,7 +295,7 @@ public:
 		TextureRestartImage.loadFromFile("Imagens/reiniciar.png");
 		TextureRestartImage.setSmooth(true);
 		RestartImage.setTexture(TextureRestartImage, true);
-		RestartImage.setScale(0.1f,0.1f);
+		RestartImage.setScale(0.1f, 0.1f);
 		RestartImage.setPosition(475, 525);
 		// imagem you win
 		TextureYouWinImage.loadFromFile("Imagens/you-win.png");
@@ -304,7 +305,6 @@ public:
 		TextureYouLoseImage.loadFromFile("Imagens/you-lose.png");
 		TextureYouLoseImage.setSmooth(true);
 
-
 		for (int i = 0; i < 6; i++)
 			for (int j = 0; j < 6; j++) {
 				jogador1.quadrados[i][j] = &tabuleiro.quadrados[i][j];
@@ -312,28 +312,28 @@ public:
 			}
 
 		if (!bufferLinha.loadFromFile("Sons/linha.ogg")) {
-			cout <<"Erro ao carregar linha.ogg\n";
+			cout << "Erro ao carregar linha.ogg\n";
 		}
 		if (!bufferPonto.loadFromFile("Sons/ponto.ogg")) {
-			cout <<"Erro ao carregar ponto.ogg\n";
+			cout << "Erro ao carregar ponto.ogg\n";
 		}
 		if (!bufferLose.loadFromFile("Sons/Derrota.ogg")) {
-			cout <<"Erro ao carregar Derrota.ogg\n";
+			cout << "Erro ao carregar Derrota.ogg\n";
 		}
 		if (!bufferWin.loadFromFile("Sons/Vitoria.ogg")) {
-			cout <<"Erro ao carregar Vitoria.ogg\n";
+			cout << "Erro ao carregar Vitoria.ogg\n";
 		}
 		if (!bufferFundo.loadFromFile("Sons/Musica-Fundo.ogg")) {
-			cout <<"Erro ao carregar Musica-Fundo.ogg\n";
+			cout << "Erro ao carregar Musica-Fundo.ogg\n";
 		}
 		if (!TextureRestartImage.loadFromFile("Imagens/reiniciar.png")) {
-		    cout <<"Erro ao carregar reiniciar.png\n";
+			cout << "Erro ao carregar reiniciar.png\n";
 		}
 		if (!TextureYouWinImage.loadFromFile("Imagens/you-win.png")) {
-		    cout <<"Erro ao carregar you-win.png\n";
+			cout << "Erro ao carregar you-win.png\n";
 		}
 		if (!TextureYouLoseImage.loadFromFile("Imagens/you-lose.png")) {
-		    cout <<"Erro ao carregar you-lose.png\n";
+			cout << "Erro ao carregar you-lose.png\n";
 		}
 
 		somLinha.setBuffer(bufferLinha);
@@ -394,90 +394,100 @@ public:
 	}
 
 	void jogadaBot() {
-	    sf::sleep(sf::milliseconds(700)); // Pequeno delay para simular pensamento
+		sf::sleep(sf::milliseconds(700)); // Pequeno delay para simular pensamento
 
-	    // Tentar completar um quadrado
-	    for (int i = 0; i < 6; i++) {
-	        for (int j = 0; j < 6; j++) {
-	            Quadrado &q = tabuleiro.quadrados[i][j];
+		// Tentar completar um quadrado
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 6; j++) {
+				Quadrado &q = tabuleiro.quadrados[i][j];
 
-	            int ladosCheios = 0;
-	            if (q.linhaSuperior->estado == CHEIO) ladosCheios++;
-	            if (q.linhaInferior->estado == CHEIO) ladosCheios++;
-	            if (q.linhaEsquerda->estado == CHEIO) ladosCheios++;
-	            if (q.linhaDireita->estado == CHEIO) ladosCheios++;
+				int ladosCheios = 0;
+				if (q.linhaSuperior->estado == CHEIO)
+					ladosCheios++;
+				if (q.linhaInferior->estado == CHEIO)
+					ladosCheios++;
+				if (q.linhaEsquerda->estado == CHEIO)
+					ladosCheios++;
+				if (q.linhaDireita->estado == CHEIO)
+					ladosCheios++;
 
-	            if (ladosCheios == 3 && q.ponto == NENHUM) {
-	                if (q.linhaSuperior->estado == VAZIO)
-	                    q.linhaSuperior->estado = CHEIO;
-	                else if (q.linhaInferior->estado == VAZIO)
-	                    q.linhaInferior->estado = CHEIO;
-	                else if (q.linhaEsquerda->estado == VAZIO)
-	                    q.linhaEsquerda->estado = CHEIO;
-	                else if (q.linhaDireita->estado == VAZIO)
-	                    q.linhaDireita->estado = CHEIO;
+				if (ladosCheios == 3 && q.ponto == NENHUM) {
+					if (q.linhaSuperior->estado == VAZIO)
+						q.linhaSuperior->estado = CHEIO;
+					else if (q.linhaInferior->estado == VAZIO)
+						q.linhaInferior->estado = CHEIO;
+					else if (q.linhaEsquerda->estado == VAZIO)
+						q.linhaEsquerda->estado = CHEIO;
+					else if (q.linhaDireita->estado == VAZIO)
+						q.linhaDireita->estado = CHEIO;
 
-	                somLinha.play();
+					somLinha.play();
 
-	                int antes = jogadorAtual->getPontuacao();
-	                jogadorAtual->AtualizaQuadrado();
+					int antes = jogadorAtual->getPontuacao();
+					jogadorAtual->AtualizaQuadrado();
 
-	                int depois = 0;
-	                for (int m = 0; m < 6; m++) {
-	                    for (int n = 0; n < 6; n++) {
-	                        if (tabuleiro.quadrados[m][n].ponto == jogadorAtual->ponto) {
-	                            depois++;
-	                        }
-	                    }
-	                }
+					int depois = 0;
+					for (int m = 0; m < 6; m++) {
+						for (int n = 0; n < 6; n++) {
+							if (tabuleiro.quadrados[m][n].ponto
+									== jogadorAtual->ponto) {
+								depois++;
+							}
+						}
+					}
 
-	                if (depois > antes) somPonto.play();
-	                jogadorAtual->setPontuacao(depois);
-	                if (depois == antes) trocarTurno();
-	                return; // Jogada feita
-	            }
-	        }
-	    }
+					if (depois > antes)
+						somPonto.play();
+					jogadorAtual->setPontuacao(depois);
+					if (depois == antes)
+						trocarTurno();
+					return; // Jogada feita
+				}
+			}
+		}
 
-	    // Caso não haja quadrados para completar, faz jogada aleatória
-	    vector<Linha*> linhasVazias;
+		// Caso não haja quadrados para completar, faz jogada aleatória
+		vector<Linha*> linhasVazias;
 
-	    for (int i = 0; i < 7; i++) {
-	        for (int j = 0; j < 6; j++) {
-	            if (tabuleiro.linhasVerticais[i][j].estado == VAZIO) {
-	                linhasVazias.push_back(&tabuleiro.linhasVerticais[i][j]);
-	            }
-	        }
-	    }
-	    for (int i = 0; i < 6; i++) {
-	        for (int j = 0; j < 7; j++) {
-	            if (tabuleiro.linhasHorizontais[i][j].estado == VAZIO) {
-	                linhasVazias.push_back(&tabuleiro.linhasHorizontais[i][j]);
-	            }
-	        }
-	    }
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 6; j++) {
+				if (tabuleiro.linhasVerticais[i][j].estado == VAZIO) {
+					linhasVazias.push_back(&tabuleiro.linhasVerticais[i][j]);
+				}
+			}
+		}
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 7; j++) {
+				if (tabuleiro.linhasHorizontais[i][j].estado == VAZIO) {
+					linhasVazias.push_back(&tabuleiro.linhasHorizontais[i][j]);
+				}
+			}
+		}
 
-	    if (!linhasVazias.empty()) {
-	        int indice = rand() % linhasVazias.size();
-	        linhasVazias[indice]->estado = CHEIO;
-	        somLinha.play();
+		if (!linhasVazias.empty()) {
+			int indice = rand() % linhasVazias.size();
+			linhasVazias[indice]->estado = CHEIO;
+			somLinha.play();
 
-	        int antes = jogadorAtual->getPontuacao();
-	        jogadorAtual->AtualizaQuadrado();
+			int antes = jogadorAtual->getPontuacao();
+			jogadorAtual->AtualizaQuadrado();
 
-	        int depois = 0;
-	        for (int i = 0; i < 6; i++) {
-	            for (int j = 0; j < 6; j++) {
-	                if (tabuleiro.quadrados[i][j].ponto == jogadorAtual->ponto) {
-	                    depois++;
-	                }
-	            }
-	        }
+			int depois = 0;
+			for (int i = 0; i < 6; i++) {
+				for (int j = 0; j < 6; j++) {
+					if (tabuleiro.quadrados[i][j].ponto
+							== jogadorAtual->ponto) {
+						depois++;
+					}
+				}
+			}
 
-	        if (depois > antes) somPonto.play();
-	        jogadorAtual->setPontuacao(depois);
-	        if (depois == antes) trocarTurno();
-	    }
+			if (depois > antes)
+				somPonto.play();
+			jogadorAtual->setPontuacao(depois);
+			if (depois == antes)
+				trocarTurno();
+		}
 	}
 
 	void Eventos(sf::Event event, float mouseX, float mouseY) {
@@ -491,7 +501,8 @@ public:
 					reiniciarJogo();
 					return; // Evita qualquer outra ação neste clique
 				}
-				bool clicou = tabuleiro.checarClique(mouseX, mouseY,jogadorAtual->ponto);
+				bool clicou = tabuleiro.checarClique(mouseX, mouseY,
+						jogadorAtual->ponto);
 				if (clicou) {
 					somLinha.play(); // Linha feita
 
@@ -501,7 +512,8 @@ public:
 					int depois = 0;
 					for (int i = 0; i < 6; i++)
 						for (int j = 0; j < 6; j++)
-							if (tabuleiro.quadrados[i][j].ponto== jogadorAtual->ponto)
+							if (tabuleiro.quadrados[i][j].ponto
+									== jogadorAtual->ponto)
 								depois++;
 
 					if (depois > antes)
@@ -527,7 +539,9 @@ public:
 				window.draw(YouWinImage);
 
 				somFundo.stop();
-				somWin.setVolume(50);
+				somPonto.stop();
+				somWin.setVolume(100);
+				somWin.getLoop();
 				somWin.play();
 			} else {
 				YouLoseImage.setTexture(TextureYouLoseImage, true);
@@ -535,7 +549,9 @@ public:
 				window.draw(YouLoseImage);
 
 				somFundo.stop();
-				somLose.setVolume(50);
+				somPonto.stop();
+				somLose.setVolume(100);
+				somLose.getLoop();
 				somLose.play();
 			}
 		}
@@ -561,7 +577,7 @@ public:
 
 			// Jogada do bot se for a vez dele
 			if (jogadorAtual == &jogador2 && !jogoTerminado()) {
-			    jogadaBot();
+				jogadaBot();
 			}
 		}
 	}
