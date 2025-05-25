@@ -32,7 +32,7 @@ public:
 			if (estado == CHEIO) {
 				shape.setFillColor(sf::Color::Black);
 			} else {
-				shape.setFillColor(sf::Color(0, 0, 0, 100)); // semi-transparente
+				shape.setFillColor(sf::Color(0, 0, 0, 130)); // semi-transparente
 			}
 		} else {
 			if (estado == CHEIO) {
@@ -121,7 +121,7 @@ public:
 	Tabuleiro() {
 		for (int i = 0; i < 7; i++) {
 			for (int j = 0; j < 6; j++) {
-				float x = (i * dim) + (i * space) + 375;
+				float x = (i * dim) + (i * space) + 295;
 				float y = (j * dim) + (j * space) + 80 + gros;
 
 				linhasVerticais[i][j] = Linha(x, y, gros, dim);
@@ -130,7 +130,7 @@ public:
 
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 7; j++) {
-				float x = (i * dim) + (i * space) + 380 + gros;
+				float x = (i * dim) + (i * space) + 300 + gros;
 				float y = (j * dim) + (j * space) + 75;
 
 				linhasHorizontais[i][j] = Linha(x, y, dim, gros);
@@ -138,7 +138,7 @@ public:
 		}
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 6; j++) {
-				float x = (i * dim) + (i * space) + 375 + gros;
+				float x = (i * dim) + (i * space) + 295 + gros;
 				float y = (j * dim) + (j * space) + 75 + gros;
 
 				quadrados[i][j] = Quadrado(x, y, dim + gros); // + gros e pra completar o espaço faltante
@@ -208,7 +208,7 @@ public:
 		const float raio = 10.0f;
 		for (int i = 0; i < 7; i++) {
 			for (int j = 0; j < 7; j++) {
-				float x = (i * dim) + (i * space) + 379;
+				float x = (i * dim) + (i * space) + 299;
 				float y = (j * dim) + (j * space) + 79;
 				sf::CircleShape ponto(raio);
 				ponto.setFillColor(sf::Color(255, 255, 255));
@@ -222,11 +222,9 @@ public:
 class Player {
 public:
 
-	string nome;
 	sf::Color cor;
 
-	Player() :
-			nome("Player1"), cor(sf::Color::Blue) {
+	Player() : cor(sf::Color::Blue) {
 
 	}
 };
@@ -243,7 +241,7 @@ public:
 		window.setFramerateLimit(90);
 	}
 
-	void executar() {
+	void open() {
 		while (window.isOpen()) {
 			sf::Event event;
 			float mouseX = sf::Mouse::getPosition(window).x;
@@ -259,7 +257,7 @@ public:
 					tabuleiro.checarClique(mouseX, mouseY);
 			}
 
-			window.clear(sf::Color(133, 199, 194));
+			window.clear(sf::Color(14, 230, 64));
 			tabuleiro.desenhar(window);
 			window.display();
 		}
@@ -268,6 +266,7 @@ public:
 
 int main() {
 	Jogo jogo;
-	jogo.executar();
+	jogo.open();
+
 	return 0;
 }
