@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <cstring>
 
 using namespace std;
@@ -15,8 +16,7 @@ public:
 	sf::RectangleShape shape;
 	Clik estado;
 
-	Linha() :
-			estado(VAZIO) {
+	Linha() : estado(VAZIO) {
 		shape.setSize(sf::Vector2f(0, 0));
 		shape.setPosition(0, 0);
 		shape.setFillColor(sf::Color(0, 0, 0, 0));
@@ -31,25 +31,21 @@ public:
 
 	void atualizar(float mouseX, float mouseY) {
 		if (shape.getGlobalBounds().contains(mouseX, mouseY)) {
-			if (estado == CHEIO) {
+			if (estado == CHEIO)
 				shape.setFillColor(sf::Color::Black);
-			} else {
+			else
 				shape.setFillColor(sf::Color(0, 0, 0, 130));
-			}
 		} else {
-			if (estado == CHEIO) {
+			if (estado == CHEIO)
 				shape.setFillColor(sf::Color::Black);
-			} else {
+			else
 				shape.setFillColor(sf::Color(0, 0, 0, 0));
-			}
 		}
 	}
 
 	void checarClique(float mouseX, float mouseY) {
-		if (shape.getGlobalBounds().contains(mouseX, mouseY)
-				&& estado == VAZIO) {
+		if (shape.getGlobalBounds().contains(mouseX, mouseY) && estado == VAZIO)
 			estado = CHEIO;
-		}
 	}
 
 	void desenhar(sf::RenderWindow &window) {
@@ -67,36 +63,33 @@ public:
 	Linha *linhaEsquerda;
 	Linha *linhaDireita;
 
-	Quadrado() :
-			ponto(NENHUM), turno(JOGADOR1), linhaSuperior(nullptr), linhaInferior(
-					nullptr), linhaEsquerda(nullptr), linhaDireita(nullptr) {
+	Quadrado() : ponto(NENHUM), turno(JOGADOR1), linhaSuperior(nullptr),
+	             linhaInferior(nullptr), linhaEsquerda(nullptr), linhaDireita(nullptr) {
 		shape.setSize(sf::Vector2f(0, 0));
 		shape.setPosition(0, 0);
 		shape.setFillColor(sf::Color(0, 0, 0, 0));
 	}
 
-	Quadrado(float x, float y, float dim) :
-			ponto(NENHUM), turno(JOGADOR1), linhaSuperior(nullptr), linhaInferior(
-					nullptr), linhaEsquerda(nullptr), linhaDireita(nullptr) {
+	Quadrado(float x, float y, float dim) : ponto(NENHUM), turno(JOGADOR1),
+	                                        linhaSuperior(nullptr), linhaInferior(nullptr),
+	                                        linhaEsquerda(nullptr), linhaDireita(nullptr) {
 		shape.setSize(sf::Vector2f(dim, dim));
 		shape.setPosition(x, y);
 		shape.setFillColor(sf::Color(0, 0, 0, 0));
 	}
 
 	void atualizar() {
-		if (ponto == JOGADOR1) {
+		if (ponto == JOGADOR1)
 			shape.setFillColor(sf::Color::Blue);
-		} else if (ponto == JOGADOR2) {
+		else if (ponto == JOGADOR2)
 			shape.setFillColor(sf::Color::Red);
-		} else {
+		else
 			shape.setFillColor(sf::Color(0, 0, 0, 0));
-		}
 	}
 
 	void checarPonto() {
-		if (linhaSuperior->estado == CHEIO && linhaInferior->estado == CHEIO
-				&& linhaEsquerda->estado == CHEIO
-				&& linhaDireita->estado == CHEIO) {
+		if (linhaSuperior->estado == CHEIO && linhaInferior->estado == CHEIO &&
+		    linhaEsquerda->estado == CHEIO && linhaDireita->estado == CHEIO) {
 			if (ponto == NENHUM) {
 				ponto = turno;
 			}
@@ -128,7 +121,6 @@ public:
 				linhasVerticais[i][j] = Linha(x, y, gros, dim);
 			}
 		}
-
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 7; j++) {
 				float x = (i * dim) + (i * space) + 300 + gros;
@@ -136,7 +128,6 @@ public:
 				linhasHorizontais[i][j] = Linha(x, y, dim, gros);
 			}
 		}
-
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 6; j++) {
 				float x = (i * dim) + (i * space) + 295 + gros;
@@ -144,7 +135,6 @@ public:
 				quadrados[i][j] = Quadrado(x, y, dim + gros);
 			}
 		}
-
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 6; j++) {
 				quadrados[i][j].linhaSuperior = &linhasHorizontais[i][j];
@@ -156,25 +146,21 @@ public:
 	}
 
 	void atualizar(float mouseX, float mouseY) {
-		for (int i = 0; i < 7; i++) {
-			for (int j = 0; j < 6; j++) {
+		for (int i = 0; i < 7; i++)
+			for (int j = 0; j < 6; j++)
 				linhasVerticais[i][j].atualizar(mouseX, mouseY);
-			}
-		}
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 7; j++) {
+
+		for (int i = 0; i < 6; i++)
+			for (int j = 0; j < 7; j++)
 				linhasHorizontais[i][j].atualizar(mouseX, mouseY);
-			}
-		}
 	}
 
 	bool checarClique(float mouseX, float mouseY, EstadoPonto turnoAtual) {
 		bool clicou = false;
 		for (int i = 0; i < 7; i++) {
 			for (int j = 0; j < 6; j++) {
-				if (linhasVerticais[i][j].shape.getGlobalBounds().contains(
-						mouseX, mouseY)
-						&& linhasVerticais[i][j].estado == VAZIO) {
+				if (linhasVerticais[i][j].shape.getGlobalBounds().contains(mouseX, mouseY) &&
+				    linhasVerticais[i][j].estado == VAZIO) {
 					linhasVerticais[i][j].estado = CHEIO;
 					clicou = true;
 				}
@@ -182,9 +168,8 @@ public:
 		}
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 7; j++) {
-				if (linhasHorizontais[i][j].shape.getGlobalBounds().contains(
-						mouseX, mouseY)
-						&& linhasHorizontais[i][j].estado == VAZIO) {
+				if (linhasHorizontais[i][j].shape.getGlobalBounds().contains(mouseX, mouseY) &&
+				    linhasHorizontais[i][j].estado == VAZIO) {
 					linhasHorizontais[i][j].estado = CHEIO;
 					clicou = true;
 				}
@@ -194,21 +179,17 @@ public:
 	}
 
 	void desenhar(sf::RenderWindow &window) {
-		for (int i = 0; i < 7; i++) {
-			for (int j = 0; j < 6; j++) {
+		for (int i = 0; i < 7; i++)
+			for (int j = 0; j < 6; j++)
 				linhasVerticais[i][j].desenhar(window);
-			}
-		}
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 7; j++) {
+
+		for (int i = 0; i < 6; i++)
+			for (int j = 0; j < 7; j++)
 				linhasHorizontais[i][j].desenhar(window);
-			}
-		}
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 6; j++) {
+
+		for (int i = 0; i < 6; i++)
+			for (int j = 0; j < 6; j++)
 				quadrados[i][j].desenhar(window);
-			}
-		}
 
 		const float raio = 10.0f;
 		for (int i = 0; i < 7; i++) {
@@ -230,9 +211,7 @@ public:
 	int pontuacao;
 	Quadrado *quadrados[6][6];
 
-	Player(EstadoPonto ponto) :
-			ponto(ponto), pontuacao(0) {
-	}
+	Player(EstadoPonto ponto) : ponto(ponto), pontuacao(0) {}
 
 	void AtualizaQuadrado() {
 		int novosPontos = 0;
@@ -253,13 +232,8 @@ public:
 		pontuacao += novosPontos;
 	}
 
-	int getPontuacao() const {
-		return pontuacao;
-	}
-
-	void setPontuacao(int p) {
-		pontuacao = p;
-	}
+	int getPontuacao() const { return pontuacao; }
+	void setPontuacao(int p) { pontuacao = p; }
 };
 
 class Jogo {
@@ -270,20 +244,32 @@ private:
 	Player jogador2;
 	Player *jogadorAtual;
 
+	sf::SoundBuffer bufferLinha;
+	sf::SoundBuffer bufferPonto;
+	sf::Sound somLinha;
+	sf::Sound somPonto;
+
 public:
 	Jogo() :
-			window(sf::VideoMode(1000, 600), "Dots version 1.2",
-					sf::Style::Close | sf::Style::Titlebar), jogador1(JOGADOR1), jogador2(
-					JOGADOR2) {
+		window(sf::VideoMode(1000, 600), "Dots version 1.2",
+		       sf::Style::Close | sf::Style::Titlebar),
+		jogador1(JOGADOR1), jogador2(JOGADOR2) {
 		jogadorAtual = &jogador1;
 		window.setFramerateLimit(90);
 
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < 6; i++)
 			for (int j = 0; j < 6; j++) {
 				jogador1.quadrados[i][j] = &tabuleiro.quadrados[i][j];
 				jogador2.quadrados[i][j] = &tabuleiro.quadrados[i][j];
 			}
-		}
+
+		if (!bufferLinha.loadFromFile("linha.ogg"))
+			printf("Erro ao carregar linha.ogg\n");
+		if (!bufferPonto.loadFromFile("ponto.ogg"))
+			printf("Erro ao carregar ponto.ogg\n");
+
+		somLinha.setBuffer(bufferLinha);
+		somPonto.setBuffer(bufferPonto);
 	}
 
 	void trocarTurno() {
@@ -303,27 +289,26 @@ public:
 					window.close();
 
 				if (event.type == sf::Event::MouseButtonPressed) {
-					bool clicou = tabuleiro.checarClique(mouseX, mouseY,
-							jogadorAtual->ponto);
+					bool clicou = tabuleiro.checarClique(mouseX, mouseY, jogadorAtual->ponto);
 					if (clicou) {
+						somLinha.play(); // 🔊 Linha feita
+
 						int antes = jogadorAtual->getPontuacao();
 						jogadorAtual->AtualizaQuadrado();
 
 						int depois = 0;
-						for (int i = 0; i < 6; i++) {
-							for (int j = 0; j < 6; j++) {
-								if (tabuleiro.quadrados[i][j].ponto
-										== jogadorAtual->ponto) {
+						for (int i = 0; i < 6; i++)
+							for (int j = 0; j < 6; j++)
+								if (tabuleiro.quadrados[i][j].ponto == jogadorAtual->ponto)
 									depois++;
-								}
-							}
-						}
+
+						if (depois > antes)
+							somPonto.play(); // 🔊 Ponto marcado
 
 						jogadorAtual->setPontuacao(depois);
 
-						if (depois == antes) {
+						if (depois == antes)
 							trocarTurno();
-						}
 					}
 				}
 			}
