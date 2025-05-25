@@ -261,6 +261,9 @@ private:
 	sf::Sound somLinha;
 	sf::Sound somPonto;
 
+	sf::Texture TextureRestartImage;
+	sf::Sprite RestartImage;
+
 public:
 	Jogo() :
 			window(sf::VideoMode(1000, 600), "Dots version 1.2",
@@ -279,17 +282,24 @@ public:
 				jogador2.quadrados[i][j] = &tabuleiro.quadrados[i][j];
 			}
 
-		if (!bufferLinha.loadFromFile("Sons/linha.ogg"))
+		if (!bufferLinha.loadFromFile("Sons/linha.ogg")) {
 			printf("Erro ao carregar linha.ogg\n");
-		if (!bufferPonto.loadFromFile("Sons/ponto.ogg"))
+		}
+		if (!bufferPonto.loadFromFile("Sons/ponto.ogg")) {
 			printf("Erro ao carregar ponto.ogg\n");
+		}
 
 		somLinha.setBuffer(bufferLinha);
 		somPonto.setBuffer(bufferPonto);
 	}
 
 	void trocarTurno() {
-		jogadorAtual = (jogadorAtual == &jogador1) ? &jogador2 : &jogador1;
+		if(jogadorAtual == &jogador1){
+			jogadorAtual = &jogador2;
+
+		} else if(jogadorAtual == &jogador2){
+			jogadorAtual = &jogador1;
+		}
 	}
 
 	void jogadaBot() {
