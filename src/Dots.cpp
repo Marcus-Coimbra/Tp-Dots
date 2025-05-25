@@ -289,15 +289,10 @@ public:
 		// imagem you win
 		TextureYouWinImage.loadFromFile("Imagens/you-win.png");
 		TextureYouWinImage.setSmooth(true);
-		YouWinImage.setTexture(TextureYouWinImage, true);
-		YouWinImage.setScale(0.6f, 0.6f);  // Ajuste proporcional
-		YouWinImage.setPosition(295, 75);  // Ajuste a posição se necessário
+
 		// imagem you lose
 		TextureYouLoseImage.loadFromFile("Imagens/you-lose.png");
 		TextureYouLoseImage.setSmooth(true);
-		YouLoseImage.setTexture(TextureYouLoseImage, true);
-		YouLoseImage.setScale(0.6f, 0.6f);  // Ajuste proporcional
-		YouLoseImage.setPosition(295, 75);  // Ajuste a posição se necessário
 
 
 		for (int i = 0; i < 6; i++)
@@ -518,14 +513,13 @@ public:
 		// Verifica se o jogo terminou e mostra o resultado
 		if (jogoTerminado()) {
 			if (jogador1.getPontuacao() > jogador2.getPontuacao()) {
-				YouWinImage.setTexture(TextureYouWinImage);
-				YouWinImage.setTextureRect(sf::IntRect(0,0,350,350));
-				YouWinImage.setPosition(295, 75);
+				YouWinImage.setTexture(TextureYouWinImage, true);
+				YouWinImage.setPosition(240, 20);
 				window.draw(YouWinImage);
 			} else {
-				YouLoseImage.setTexture(TextureYouLoseImage);
-				YouLoseImage.setTextureRect(sf::IntRect(0,0,350,350));
-				YouLoseImage.setPosition(295, 75);
+				YouLoseImage.setTexture(TextureYouLoseImage, true);
+				YouLoseImage.setPosition(240, 20);
+
 				window.draw(YouLoseImage);
 			}
 		}
