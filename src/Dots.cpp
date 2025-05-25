@@ -277,20 +277,22 @@ public:
 					JOGADOR2) {
 
 		srand((unsigned) time(0));
-
 		jogadorAtual = &jogador1;
 
 		window.setFramerateLimit(60);
-
-		//imagens
 		//imagem restart
 		TextureRestartImage.loadFromFile("Imagens/reiniciar.png");
 		RestartImage.setTexture(TextureRestartImage, true);
 		RestartImage.setTextureRect(sf::IntRect(0, 0, 50, 50));
 		RestartImage.setPosition(450, 500);
+		//imagem you win
+		TextureYouWinImage.loadFromFile("Imagens/you-win.png");
+		YouWinImage.setTexture(TextureRestartImage, true);
+		YouWinImage.setPosition(1, 1);
 		//imagem you lose
-		TextureYouWinImage.loadFromFile("Imagens/you-lose.png");
-		TextureYouLoseImage.loadFromFile("Imagens/you-win.png");
+		TextureYouLoseImage.loadFromFile("Imagens/you-lose.png");
+		YouLoseImage.setTexture(TextureRestartImage, true);
+		YouLoseImage.setPosition(1, 1);
 
 		for (int i = 0; i < 6; i++)
 			for (int j = 0; j < 6; j++) {
