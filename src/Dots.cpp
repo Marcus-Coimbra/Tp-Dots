@@ -260,12 +260,20 @@ private:
 public:
 	sf::SoundBuffer bufferLinha;
 	sf::SoundBuffer bufferPonto;
+	sf::SoundBuffer bufferLose;
+	sf::SoundBuffer bufferWin;
+	sf::SoundBuffer bufferFundo;
+
 	sf::Sound somLinha;
 	sf::Sound somPonto;
+	sf::Sound somLose;
+	sf::Sound somWin;
+	sf::Sound somFundo;
 
 	sf::Texture TextureRestartImage;
 	sf::Texture TextureYouWinImage;
 	sf::Texture TextureYouLoseImage;
+
 	sf::Sprite RestartImage;
 	sf::Sprite YouWinImage;
 	sf::Sprite YouLoseImage;
