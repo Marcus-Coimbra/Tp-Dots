@@ -267,7 +267,7 @@ public:
 					sf::Style::Close | sf::Style::Titlebar), jogador1(JOGADOR1), jogador2(
 					JOGADOR2) {
 
-		srand((unsigned)time(0));
+		srand((unsigned) time(0));
 
 		jogadorAtual = &jogador1;
 
@@ -293,24 +293,84 @@ public:
 	}
 
 	void jogadaBot() {
-		bool jogou = false;
-		vector<Linha*> linhasVazias;
+		// Tentar completar um quadrado
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 6; j++) {
+				Quadrado &q = tabuleiro.quadrados[i][j];
 
-		// Coletar todas as linhas verticais vazias
-		for (int i = 0; i < 7; i++)
-			for (int j = 0; j < 6; j++)
-				if (tabuleiro.linhasVerticais[i][j].estado == VAZIO)
-					linhasVazias.push_back(&tabuleiro.linhasVerticais[i][j]);
+				int ladosCheios = 0;
+				if (q.linhaSuperior->estado == CHEIO)
+					ladosCheios++;
+				if (q.linhaInferior->estado == CHEIO)
+					ladosCheios++;
+				if (q.linhaEsquerda->estado == CHEIO)
+					ladosCheios++;
+				if (q.linhaDireita->estado == CHEIO)
+					ladosCheios++;
 
-		// Coletar todas as linhas horizontais vazias
-		for (int i = 0; i < 6; i++)
-			for (int j = 0; j < 7; j++)
-				if (tabuleiro.linhasHorizontais[i][j].estado == VAZIO)
-					linhasVazias.push_back(&tabuleiro.linhasHorizontais[i][j]);
+				// Se tiver exatamente 3 lados preenchidos e for livre, completar o quadrado
+				if (ladosCheios == 3 && q.ponto == NENHUM) {
+					if (q.linhaSuperior->estado == VAZIO) {
+						q.linhaSuperior->estado = CHEIO;
+					} else if (q.linhaInferior->estado == VAZIO) {
+						q.linhaInferior->estado = CHEIO;
+					} else if (q.linhaEsquerda->estado == VAZIO) {
+						q.linhaEsquerda->estado = CHEIO;
+					} else if (q.linhaDireita->estado == VAZIO) {
+						q.linhaDireita->estado = CHEIO;
+					}
 
-		if (!linhasVazias.empty()) {
-			// Escolher linha aleatória
-			int indice = rand() % linhasVazias.size();
+					somLinha.play();
+
+					int antes = jogadorAtual->getPontuacao();
+					jogadorAtual->AtualizaQuadrado();
+
+					int depois = 0;
+					for (int m = 0; m < 6; m++) {
+						for (int n = 0; n < 6; n++) {
+							if (tabuleiro.quadrados[m][n].ponto
+									== jogadorAtual->ponto) {
+								depois++;
+							}
+						}
+					}
+
+					if (depois > antes) {
+						somPonto.play();
+					}
+
+					jogadorAtual->setPontuacao(depois);
+
+					// Se não ganhou ponto, troca turno
+					if (depois == antes) {
+						trocarTurno();
+					}
+					return; // Jogada feita
+				}
+			}
+		}
+
+		// Caso não haja quadrados para completar, faz jogada aleatória
+		Linha *linhasVazias[180];
+		int total = 0;
+
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 6; j++) {
+				if (tabuleiro.linhasVerticais[i][j].estado == VAZIO) {
+					linhasVazias[total++] = &tabuleiro.linhasVerticais[i][j];
+				}
+			}
+		}
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 7; j++) {
+				if (tabuleiro.linhasHorizontais[i][j].estado == VAZIO) {
+					linhasVazias[total++] = &tabuleiro.linhasHorizontais[i][j];
+				}
+			}
+		}
+
+		if (total > 0) {
+			int indice = rand() % total;
 			linhasVazias[indice]->estado = CHEIO;
 			somLinha.play();
 
@@ -318,18 +378,24 @@ public:
 			jogadorAtual->AtualizaQuadrado();
 
 			int depois = 0;
-			for (int i = 0; i < 6; i++)
-				for (int j = 0; j < 6; j++)
-					if (tabuleiro.quadrados[i][j].ponto == jogadorAtual->ponto)
+			for (int i = 0; i < 6; i++) {
+				for (int j = 0; j < 6; j++) {
+					if (tabuleiro.quadrados[i][j].ponto
+							== jogadorAtual->ponto) {
 						depois++;
+					}
+				}
+			}
 
-			if (depois > antes)
+			if (depois > antes) {
 				somPonto.play();
+			}
 
 			jogadorAtual->setPontuacao(depois);
 
-			if (depois == antes)
+			if (depois == antes) {
 				trocarTurno();
+			}
 		}
 	}
 
@@ -378,7 +444,7 @@ public:
 
 			// Jogada do bot (Player 2)
 			if (jogadorAtual == &jogador2) {
-				sf::sleep(sf::milliseconds(600));  // Pequeno delay para simular pensamento
+				sf::sleep(sf::milliseconds(500)); // Pequeno delay para simular pensamento
 				jogadaBot();
 			}
 		}
