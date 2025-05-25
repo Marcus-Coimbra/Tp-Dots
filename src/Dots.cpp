@@ -283,16 +283,14 @@ public:
 		//imagem restart
 		TextureRestartImage.loadFromFile("Imagens/reiniciar.png");
 		RestartImage.setTexture(TextureRestartImage, true);
-		RestartImage.setTextureRect(sf::IntRect(0, 0, 50, 50));
+		RestartImage.setTextureRect(sf::IntRect(0,0,50,50));
 		RestartImage.setPosition(450, 500);
 		//imagem you win
 		TextureYouWinImage.loadFromFile("Imagens/you-win.png");
-		YouWinImage.setTexture(TextureRestartImage, true);
-		YouWinImage.setPosition(1, 1);
+		YouWinImage.setTexture(TextureYouWinImage, true);
 		//imagem you lose
 		TextureYouLoseImage.loadFromFile("Imagens/you-lose.png");
-		YouLoseImage.setTexture(TextureRestartImage, true);
-		YouLoseImage.setPosition(1, 1);
+		YouLoseImage.setTexture(TextureYouLoseImage, true);
 
 		for (int i = 0; i < 6; i++)
 			for (int j = 0; j < 6; j++) {
@@ -328,6 +326,27 @@ public:
 		} else if (jogadorAtual == &jogador2) {
 			jogadorAtual = &jogador1;
 		}
+	}
+
+	void reiniciarJogo() {
+		for (int i = 0; i < 7; i++)
+			for (int j = 0; j < 6; j++)
+				tabuleiro.linhasVerticais[i][j].estado = VAZIO;
+
+		for (int i = 0; i < 6; i++)
+			for (int j = 0; j < 7; j++)
+				tabuleiro.linhasHorizontais[i][j].estado = VAZIO;
+
+		for (int i = 0; i < 6; i++)
+			for (int j = 0; j < 6; j++) {
+				tabuleiro.quadrados[i][j].ponto = NENHUM;
+				tabuleiro.quadrados[i][j].turno = JOGADOR1;
+				tabuleiro.quadrados[i][j].atualizar();
+			}
+
+		jogador1.setPontuacao(0);
+		jogador2.setPontuacao(0);
+		jogadorAtual = &jogador1;
 	}
 
 	void jogadaBot() {
@@ -446,8 +465,12 @@ public:
 				window.close();
 
 			if (event.type == sf::Event::MouseButtonPressed) {
-				bool clicou = tabuleiro.checarClique(mouseX, mouseY,
-						jogadorAtual->ponto);
+				if (RestartImage.getGlobalBounds().contains(mouseX, mouseY)) {
+					somLinha.play();
+					reiniciarJogo();
+					return; // Evita qualquer outra ação neste clique
+				}
+				bool clicou = tabuleiro.checarClique(mouseX, mouseY,jogadorAtual->ponto);
 				if (clicou) {
 					somLinha.play(); // Linha feita
 
@@ -457,8 +480,7 @@ public:
 					int depois = 0;
 					for (int i = 0; i < 6; i++)
 						for (int j = 0; j < 6; j++)
-							if (tabuleiro.quadrados[i][j].ponto
-									== jogadorAtual->ponto)
+							if (tabuleiro.quadrados[i][j].ponto== jogadorAtual->ponto)
 								depois++;
 
 					if (depois > antes)
@@ -478,17 +500,19 @@ public:
 		if (jogoTerminado()) {
 			if (jogador1.getPontuacao() > jogador2.getPontuacao()) {
 				YouWinImage.setTexture(TextureYouWinImage);
-				YouWinImage.setPosition(300, 200);
+				YouWinImage.setTextureRect(sf::IntRect(175,175,175,175));
+				YouWinImage.setPosition(295, 75);
 				window.draw(YouWinImage);
 			} else {
 				YouLoseImage.setTexture(TextureYouLoseImage);
-				YouLoseImage.setPosition(300, 200);
+				YouLoseImage.setTextureRect(sf::IntRect(175,175,175,175));
+				YouLoseImage.setPosition(295, 75);
 				window.draw(YouLoseImage);
 			}
 		}
 	}
 
-	void open() {
+	void Open() {
 		while (window.isOpen()) {
 			sf::Event event;
 			float mouseX = sf::Mouse::getPosition(window).x;
@@ -506,10 +530,11 @@ public:
 
 			window.display();
 
-			// Jogada do bot (Player 2)
-			if (jogadorAtual == &jogador2) {
-				jogadaBot();
+			// Jogada do bot se for a vez dele
+			if (jogadorAtual == &jogador2 && !jogoTerminado()) {
+			    jogadaBot();
 			}
+
 		}
 	}
 
@@ -517,6 +542,6 @@ public:
 
 int main() {
 	Jogo jogo;
-	jogo.open();
+	jogo.Open();
 	return 0;
 }
