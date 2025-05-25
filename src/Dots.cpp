@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-#include <cstring>
+#include <random>
 
 using namespace std;
 
@@ -251,6 +251,7 @@ class Jogo {
 private:
 	sf::RenderWindow window;
 	Tabuleiro tabuleiro;
+
 	Player jogador1;
 	Player jogador2;
 	Player *jogadorAtual;
@@ -265,8 +266,12 @@ public:
 			window(sf::VideoMode(1000, 600), "Dots version 1.2",
 					sf::Style::Close | sf::Style::Titlebar), jogador1(JOGADOR1), jogador2(
 					JOGADOR2) {
+
+		srand((unsigned)time(0));
+
 		jogadorAtual = &jogador1;
-		window.setFramerateLimit(90);
+
+		window.setFramerateLimit(60);
 
 		for (int i = 0; i < 6; i++)
 			for (int j = 0; j < 6; j++) {
@@ -285,6 +290,47 @@ public:
 
 	void trocarTurno() {
 		jogadorAtual = (jogadorAtual == &jogador1) ? &jogador2 : &jogador1;
+	}
+
+	void jogadaBot() {
+		bool jogou = false;
+		vector<Linha*> linhasVazias;
+
+		// Coletar todas as linhas verticais vazias
+		for (int i = 0; i < 7; i++)
+			for (int j = 0; j < 6; j++)
+				if (tabuleiro.linhasVerticais[i][j].estado == VAZIO)
+					linhasVazias.push_back(&tabuleiro.linhasVerticais[i][j]);
+
+		// Coletar todas as linhas horizontais vazias
+		for (int i = 0; i < 6; i++)
+			for (int j = 0; j < 7; j++)
+				if (tabuleiro.linhasHorizontais[i][j].estado == VAZIO)
+					linhasVazias.push_back(&tabuleiro.linhasHorizontais[i][j]);
+
+		if (!linhasVazias.empty()) {
+			// Escolher linha aleatória
+			int indice = rand() % linhasVazias.size();
+			linhasVazias[indice]->estado = CHEIO;
+			somLinha.play();
+
+			int antes = jogadorAtual->getPontuacao();
+			jogadorAtual->AtualizaQuadrado();
+
+			int depois = 0;
+			for (int i = 0; i < 6; i++)
+				for (int j = 0; j < 6; j++)
+					if (tabuleiro.quadrados[i][j].ponto == jogadorAtual->ponto)
+						depois++;
+
+			if (depois > antes)
+				somPonto.play();
+
+			jogadorAtual->setPontuacao(depois);
+
+			if (depois == antes)
+				trocarTurno();
+		}
 	}
 
 	void open() {
@@ -329,6 +375,12 @@ public:
 			window.clear(sf::Color(14, 230, 64));
 			tabuleiro.desenhar(window);
 			window.display();
+
+			// Jogada do bot (Player 2)
+			if (jogadorAtual == &jogador2) {
+				sf::sleep(sf::milliseconds(600));  // Pequeno delay para simular pensamento
+				jogadaBot();
+			}
 		}
 	}
 };
