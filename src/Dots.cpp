@@ -1,5 +1,7 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <cstring>
+#include <iostream>
 
 using namespace std;
 
@@ -12,8 +14,7 @@ public:
 	sf::RectangleShape shape;
 	Clik estado;
 
-	Linha() :
-			estado(VAZIO) { //lista de inicialização
+	Linha() : estado(VAZIO) {
 		shape.setSize(sf::Vector2f(0, 0));
 		shape.setPosition(0, 0);
 		shape.setFillColor(sf::Color(0, 0, 0, 0));
@@ -22,33 +23,32 @@ public:
 	Linha(float x, float y, float width, float height) {
 		shape.setSize(sf::Vector2f(width, height));
 		shape.setPosition(x, y);
-		shape.setFillColor(sf::Color(0, 0, 0, 0)); //cor transparente para se juntar a tela indenpendete de sua cor
+		shape.setFillColor(sf::Color(0, 0, 0, 0));
 		estado = VAZIO;
 	}
 
 	void atualizar(float mouseX, float mouseY) {
-		//verifica as linhas e modifica a cor de acordo com a posição do mouse
 		if (shape.getGlobalBounds().contains(mouseX, mouseY)) {
 			if (estado == CHEIO) {
 				shape.setFillColor(sf::Color::Black);
 			} else {
-				shape.setFillColor(sf::Color(0, 0, 0, 100)); // semi-transparente
+				shape.setFillColor(sf::Color(0, 0, 0, 100));
 			}
 		} else {
 			if (estado == CHEIO) {
 				shape.setFillColor(sf::Color::Black);
 			} else {
-				shape.setFillColor(sf::Color(0, 0, 0, 0)); // transparente
+				shape.setFillColor(sf::Color(0, 0, 0, 0));
 			}
 		}
 	}
 
-	void checarClique(float mouseX, float mouseY) {
-		//Se o mouse estiver sobre a linha quando clicado, muda seu estado para CHEIO
-		if (shape.getGlobalBounds().contains(mouseX, mouseY)
-				&& estado == VAZIO) { // garante que só possa ser atribuido valor 1 vez
+	bool checarClique(float mouseX, float mouseY) {
+		if (shape.getGlobalBounds().contains(mouseX, mouseY) && estado == VAZIO) {
 			estado = CHEIO;
+			return true; // Retorna true se foi clicado com sucesso
 		}
+		return false;
 	}
 
 	void desenhar(sf::RenderWindow &window) {
@@ -66,21 +66,16 @@ public:
 	Linha *linhaEsquerda;
 	Linha *linhaDireita;
 
-	Quadrado() :
-			ponto(VAZIO), linhaSuperior(nullptr), linhaInferior(nullptr), linhaEsquerda(
-					nullptr), linhaDireita(nullptr) {
+	Quadrado() : ponto(VAZIO), linhaSuperior(nullptr), linhaInferior(nullptr), linhaEsquerda(nullptr), linhaDireita(nullptr) {
 		shape.setSize(sf::Vector2f(0, 0));
 		shape.setPosition(0, 0);
 		shape.setFillColor(sf::Color(0, 0, 0, 0));
 	}
 
-	Quadrado(float x, float y, float dim) :
-			linhaSuperior(nullptr), linhaInferior(nullptr), linhaEsquerda(
-					nullptr), linhaDireita(nullptr) //lista de inicialização de ponteiros
-	{
+	Quadrado(float x, float y, float dim) : linhaSuperior(nullptr), linhaInferior(nullptr), linhaEsquerda(nullptr), linhaDireita(nullptr) {
 		shape.setSize(sf::Vector2f(dim, dim));
 		shape.setPosition(x, y);
-		shape.setFillColor(sf::Color(0, 0, 0, 0)); //cor transparente para se juntar a tela indenpendete de sua cor
+		shape.setFillColor(sf::Color(0, 0, 0, 0));
 		ponto = VAZIO;
 	}
 
@@ -92,13 +87,13 @@ public:
 		}
 	}
 
-	void checarPonto() {
-		// verifica as 4 linhas entorno do qudrado
-		if (linhaSuperior->estado == CHEIO && linhaInferior->estado == CHEIO
-				&& linhaEsquerda->estado == CHEIO
-				&& linhaDireita->estado == CHEIO) {
+	bool checarPonto() {
+		if (ponto == VAZIO && linhaSuperior->estado == CHEIO && linhaInferior->estado == CHEIO &&
+			linhaEsquerda->estado == CHEIO && linhaDireita->estado == CHEIO) {
 			ponto = CHEIO;
+			return true; // Retorna true se fez ponto
 		}
+		return false;
 	}
 
 	void desenhar(sf::RenderWindow &window) {
@@ -118,35 +113,53 @@ private:
 	const int space = 2 * gros;
 
 public:
+	// Sons
+	sf::SoundBuffer bufferClique;
+	sf::SoundBuffer bufferPonto;
+	sf::Sound somClique;
+	sf::Sound somPonto;
+
 	Tabuleiro() {
+		// Carregar sons
+		if (!bufferClique.loadFromFile("click.ogg")) {
+			cout << "Erro ao carregar click.ogg\n";
+		}
+		if (!bufferPonto.loadFromFile("ponto.ogg")) {
+			cout << "Erro ao carregar ponto.ogg\n";
+		}
+		somClique.setBuffer(bufferClique);
+		somPonto.setBuffer(bufferPonto);
+
+		// Inicializar linhas verticais
 		for (int i = 0; i < 7; i++) {
 			for (int j = 0; j < 6; j++) {
 				float x = (i * dim) + (i * space) + 375;
 				float y = (j * dim) + (j * space) + 80 + gros;
-
 				linhasVerticais[i][j] = Linha(x, y, gros, dim);
 			}
 		}
 
+		// Inicializar linhas horizontais
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 7; j++) {
 				float x = (i * dim) + (i * space) + 380 + gros;
 				float y = (j * dim) + (j * space) + 75;
-
 				linhasHorizontais[i][j] = Linha(x, y, dim, gros);
 			}
 		}
+
+		// Inicializar quadrados
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 6; j++) {
 				float x = (i * dim) + (i * space) + 375 + gros;
 				float y = (j * dim) + (j * space) + 75 + gros;
-
-				quadrados[i][j] = Quadrado(x, y, dim + gros); // + gros e pra completar o espaço faltante
+				quadrados[i][j] = Quadrado(x, y, dim + gros);
 			}
 		}
+
+		// Atribuir linhas aos quadrados
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 6; j++) {
-				// Cálculo para verificar linhas horizontais e verticais
 				quadrados[i][j].linhaSuperior = &linhasHorizontais[i][j];
 				quadrados[i][j].linhaInferior = &linhasHorizontais[i][j + 1];
 				quadrados[i][j].linhaEsquerda = &linhasVerticais[i][j];
@@ -168,21 +181,39 @@ public:
 		}
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 6; j++) {
-				quadrados[i][j].checarPonto();
 				quadrados[i][j].atualizar();
 			}
 		}
 	}
 
 	void checarClique(float mouseX, float mouseY) {
+		bool clicouLinha = false;
 		for (int i = 0; i < 7; i++) {
 			for (int j = 0; j < 6; j++) {
-				linhasVerticais[i][j].checarClique(mouseX, mouseY);
+				if (linhasVerticais[i][j].checarClique(mouseX, mouseY)) {
+					clicouLinha = true;
+				}
 			}
 		}
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 7; j++) {
-				linhasHorizontais[i][j].checarClique(mouseX, mouseY);
+				if (linhasHorizontais[i][j].checarClique(mouseX, mouseY)) {
+					clicouLinha = true;
+				}
+			}
+		}
+
+		// Se clicou numa linha, tocar som
+		if (clicouLinha) {
+			somClique.play();
+		}
+
+		// Verificar pontos
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 6; j++) {
+				if (quadrados[i][j].checarPonto()) {
+					somPonto.play();
+				}
 			}
 		}
 	}
@@ -204,7 +235,7 @@ public:
 			}
 		}
 
-// Desenhar pontos brancos nos entre os espaços
+		// Desenhar pontos brancos
 		const float raio = 10.0f;
 		for (int i = 0; i < 7; i++) {
 			for (int j = 0; j < 7; j++) {
@@ -219,27 +250,13 @@ public:
 	}
 };
 
-class Player {
-public:
-
-	string nome;
-	sf::Color cor;
-
-	Player() :
-			nome("Player1"), cor(sf::Color::Blue) {
-
-	}
-};
-
 class Jogo {
 private:
 	sf::RenderWindow window;
 	Tabuleiro tabuleiro;
 
 public:
-	Jogo() : //lista de inicialização para membro janela
-			window(sf::VideoMode(1000, 600), "Dots version 1.2",
-					sf::Style::Close | sf::Style::Titlebar) {
+	Jogo() : window(sf::VideoMode(1000, 600), "Dots version 1.3", sf::Style::Close | sf::Style::Titlebar) {
 		window.setFramerateLimit(90);
 	}
 
