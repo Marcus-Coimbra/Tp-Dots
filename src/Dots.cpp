@@ -208,6 +208,7 @@ public:
 			}
 		}
 	}
+
 };
 
 class Player {
@@ -256,13 +257,18 @@ private:
 	Player jogador2;
 	Player *jogadorAtual;
 
+public:
 	sf::SoundBuffer bufferLinha;
 	sf::SoundBuffer bufferPonto;
 	sf::Sound somLinha;
 	sf::Sound somPonto;
 
 	sf::Texture TextureRestartImage;
+	sf::Texture TextureYouWinImage;
+	sf::Texture TextureYouLoseImage;
 	sf::Sprite RestartImage;
+	sf::Sprite YouWinImage;
+	sf::Sprite YouLoseImage;
 
 public:
 	Jogo() :
@@ -275,6 +281,16 @@ public:
 		jogadorAtual = &jogador1;
 
 		window.setFramerateLimit(60);
+
+		//imagens
+		//imagem restart
+		TextureRestartImage.loadFromFile("Imagens/reiniciar.png");
+		RestartImage.setTexture(TextureRestartImage, true);
+		RestartImage.setTextureRect(sf::IntRect(0, 0, 50, 50));
+		RestartImage.setPosition(450, 500);
+		//imagem you lose
+		TextureYouWinImage.loadFromFile("Imagens/you-lose.png");
+		TextureYouLoseImage.loadFromFile("Imagens/you-win.png");
 
 		for (int i = 0; i < 6; i++)
 			for (int j = 0; j < 6; j++) {
@@ -293,16 +309,29 @@ public:
 		somPonto.setBuffer(bufferPonto);
 	}
 
+private:
+	bool jogoTerminado() {
+		for (int i = 0; i < 6; i++)
+			for (int j = 0; j < 6; j++)
+				if (tabuleiro.quadrados[i][j].ponto == NENHUM)
+					return false;
+		return true;
+	}
+
+public:
 	void trocarTurno() {
-		if(jogadorAtual == &jogador1){
+		if (jogadorAtual == &jogador1) {
 			jogadorAtual = &jogador2;
 
-		} else if(jogadorAtual == &jogador2){
+		} else if (jogadorAtual == &jogador2) {
 			jogadorAtual = &jogador1;
 		}
 	}
 
 	void jogadaBot() {
+
+		sf::sleep(sf::milliseconds(800)); // Pequeno delay para simular pensamento
+
 		// Tentar completar um quadrado
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 6; j++) {
@@ -409,6 +438,54 @@ public:
 		}
 	}
 
+	void Eventos(sf::Event event, float mouseX, float mouseY) {
+		while (window.pollEvent(event)) {
+			if (event.type == sf::Event::Closed)
+				window.close();
+
+			if (event.type == sf::Event::MouseButtonPressed) {
+				bool clicou = tabuleiro.checarClique(mouseX, mouseY,
+						jogadorAtual->ponto);
+				if (clicou) {
+					somLinha.play(); // Linha feita
+
+					int antes = jogadorAtual->getPontuacao();
+					jogadorAtual->AtualizaQuadrado();
+
+					int depois = 0;
+					for (int i = 0; i < 6; i++)
+						for (int j = 0; j < 6; j++)
+							if (tabuleiro.quadrados[i][j].ponto
+									== jogadorAtual->ponto)
+								depois++;
+
+					if (depois > antes)
+						somPonto.play(); // Ponto marcado
+
+					jogadorAtual->setPontuacao(depois);
+
+					if (depois == antes)
+						trocarTurno();
+				}
+			}
+		}
+	}
+
+	void FimDoJogo() {
+		// Verifica se o jogo terminou e mostra o resultado
+		if (jogoTerminado()) {
+			if (jogador1.getPontuacao() > jogador2.getPontuacao()) {
+				YouWinImage.setTexture(TextureYouWinImage);
+				YouWinImage.setPosition(300, 200);
+				window.draw(YouWinImage);
+			} else {
+				YouLoseImage.setTexture(TextureYouLoseImage);
+				YouLoseImage.setPosition(300, 200);
+				window.draw(YouLoseImage);
+			}
+		}
+	}
+
 	void open() {
 		while (window.isOpen()) {
 			sf::Event event;
@@ -417,48 +494,23 @@ public:
 
 			tabuleiro.atualizar(mouseX, mouseY);
 
-			while (window.pollEvent(event)) {
-				if (event.type == sf::Event::Closed)
-					window.close();
-
-				if (event.type == sf::Event::MouseButtonPressed) {
-					bool clicou = tabuleiro.checarClique(mouseX, mouseY,
-							jogadorAtual->ponto);
-					if (clicou) {
-						somLinha.play(); // Linha feita
-
-						int antes = jogadorAtual->getPontuacao();
-						jogadorAtual->AtualizaQuadrado();
-
-						int depois = 0;
-						for (int i = 0; i < 6; i++)
-							for (int j = 0; j < 6; j++)
-								if (tabuleiro.quadrados[i][j].ponto
-										== jogadorAtual->ponto)
-									depois++;
-
-						if (depois > antes)
-							somPonto.play(); // Ponto marcado
-
-						jogadorAtual->setPontuacao(depois);
-
-						if (depois == antes)
-							trocarTurno();
-					}
-				}
-			}
+			Eventos(event, mouseX, mouseY);
 
 			window.clear(sf::Color(14, 230, 64));
 			tabuleiro.desenhar(window);
+			window.draw(RestartImage);
+
+			FimDoJogo();
+
 			window.display();
 
 			// Jogada do bot (Player 2)
 			if (jogadorAtual == &jogador2) {
-				sf::sleep(sf::milliseconds(700)); // Pequeno delay para simular pensamento
 				jogadaBot();
 			}
 		}
 	}
+
 };
 
 int main() {
