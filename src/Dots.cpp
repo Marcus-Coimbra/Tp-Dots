@@ -277,46 +277,45 @@ public:
         }
     }
 
-    void realizarJogadaComputador() {
-        bool jogando = true;
+void realizarJogadaComputador() {
+	bool jogando = true;
 
-        while (jogando) {
-            jogando = false;
-            vector<Linha*> linhasDisponiveis;
+    while (jogando) {
+    jogando = false;
+    vector<Linha*> linhasDisponiveis;
 
-            auto& linhasVerticais = tabuleiro.getLinhasVerticais();
-            auto& linhasHorizontais = tabuleiro.getLinhasHorizontais();
+    auto& linhasVerticais = tabuleiro.getLinhasVerticais();
+    auto& linhasHorizontais = tabuleiro.getLinhasHorizontais();
 
-            for (int i = 0; i < 7; i++) {
-                for (int j = 0; j < 6; j++) {
-                    if (linhasVerticais[i][j].estado == VAZIO) {
-                        linhasDisponiveis.push_back(&linhasVerticais[i][j]);
-                    }
+    	for (int i = 0; i < 7; i++) {
+    		for (int j = 0; j < 6; j++) {
+    			if (linhasVerticais[i][j].estado == VAZIO) {
+    				linhasDisponiveis.push_back(&linhasVerticais[i][j]);
                 }
             }
-
-            for (int i = 0; i < 6; i++) {
-                for (int j = 0; j < 7; j++) {
-                    if (linhasHorizontais[i][j].estado == VAZIO) {
-                        linhasDisponiveis.push_back(&linhasHorizontais[i][j]);
-                    }
+        }
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 7; j++) {
+                if (linhasHorizontais[i][j].estado == VAZIO) {
+                	linhasDisponiveis.push_back(&linhasHorizontais[i][j]);
                 }
             }
+        }
+        if (!linhasDisponiveis.empty()) {
 
-            if (!linhasDisponiveis.empty()) {
-                int indice = rand() % linhasDisponiveis.size();
-                linhasDisponiveis[indice]->estado = CHEIO;
-                linhasDisponiveis[indice]->shape.setFillColor(sf::Color::Black);
+        	int indice = rand() % linhasDisponiveis.size();
+            linhasDisponiveis[indice]->estado = CHEIO;
+            linhasDisponiveis[indice]->shape.setFillColor(sf::Color::Black);
 
-                bool fezPonto = tabuleiro.verificarQuadradoFeito(COMPUTADOR);
+            bool fezPonto = tabuleiro.verificarQuadradoFeito(COMPUTADOR);
                 if (fezPonto) {
                     jogando = true;
                     sf::sleep(sf::milliseconds(300));
                 } else {
                     turnoJogador = true;
-                }
-            }
-        }
+               	}
+           	}
+      	}
     }
 };
 
