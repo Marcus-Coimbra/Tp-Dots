@@ -1,17 +1,16 @@
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include <vector>
+#include <cstdlib>
 #include <ctime>
 
 using namespace std;
 
-enum Clik {
-    VAZIO, CHEIO
-};
+// ================= ENUMS =================
+enum Clik { VAZIO, CHEIO };
+enum Dono { NENHUM, JOGADOR, COMPUTADOR };
 
-enum Dono {
-    NENHUM, JOGADOR, COMPUTADOR
-};
-
+// ================= CLASSE LINHA =================
 class Linha {
 public:
     sf::RectangleShape shape;
@@ -51,6 +50,7 @@ public:
     }
 };
 
+// ================= CLASSE QUADRADO =================
 class Quadrado {
 public:
     sf::RectangleShape shape;
@@ -67,7 +67,7 @@ public:
         shape.setFillColor(sf::Color(0, 0, 0, 0));
     }
 
-    Quadrado(float x, float y, float dim) : linhaSuperior(nullptr), linhaInferior(nullptr), linhaEsquerda(nullptr), linhaDireita(nullptr) {
+    Quadrado(float x, float y, float dim) {
         shape.setSize(sf::Vector2f(dim, dim));
         shape.setPosition(x, y);
         shape.setFillColor(sf::Color(0, 0, 0, 0));
@@ -85,12 +85,15 @@ public:
     }
 
     bool checarPonto(Dono atual) {
-        if (dono == NENHUM && linhaSuperior->estado == CHEIO && linhaInferior->estado == CHEIO && linhaEsquerda->estado == CHEIO && linhaDireita->estado == CHEIO) {
+        if (dono == NENHUM &&
+            linhaSuperior->estado == CHEIO &&
+            linhaInferior->estado == CHEIO &&
+            linhaEsquerda->estado == CHEIO &&
+            linhaDireita->estado == CHEIO) {
             dono = atual;
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     void desenhar(sf::RenderWindow& window) {
@@ -98,6 +101,7 @@ public:
     }
 };
 
+// ================= CLASSE TABULEIRO =================
 class Tabuleiro {
 private:
     Linha linhasVerticais[7][6];
@@ -110,6 +114,11 @@ private:
 
 public:
     Tabuleiro() {
+        criarTabuleiro();
+    }
+
+    void criarTabuleiro() {
+        // Linhas verticais
         for (int i = 0; i < 7; i++) {
             for (int j = 0; j < 6; j++) {
                 float x = (i * dim) + (i * space) + 375;
@@ -118,6 +127,7 @@ public:
             }
         }
 
+        // Linhas horizontais
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 7; j++) {
                 float x = (i * dim) + (i * space) + 380 + gros;
@@ -126,6 +136,7 @@ public:
             }
         }
 
+        // Quadrados
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
                 float x = (i * dim) + (i * space) + 375 + gros;
@@ -134,6 +145,7 @@ public:
             }
         }
 
+        // Ligações dos quadrados às linhas
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
                 quadrados[i][j].linhaSuperior = &linhasHorizontais[i][j];
@@ -183,17 +195,22 @@ public:
             for (int j = 0; j < 6; j++)
                 quadrados[i][j].desenhar(window);
 
+        // Desenhar pontos
         const float raio = 10.0f;
         for (int i = 0; i < 7; i++) {
             for (int j = 0; j < 7; j++) {
-                float x = (i * dim) + (i * space) + 379;
-                float y = (j * dim) + (j * space) + 79;
+                float x = (i * 50) + (i * 16) + 379;
+                float y = (j * 50) + (j * 16) + 79;
                 sf::CircleShape ponto(raio);
-                ponto.setFillColor(sf::Color(255, 255, 255));
+                ponto.setFillColor(sf::Color::White);
                 ponto.setPosition(x - raio, y - raio);
                 window.draw(ponto);
             }
         }
+    }
+
+    void reset() {
+        criarTabuleiro();
     }
 
     Linha(&getLinhasVerticais())[7][6] {
@@ -205,16 +222,47 @@ public:
     }
 };
 
+// ================= CLASSE JOGO =================
 class JogoContraPC {
 private:
     sf::RenderWindow window;
     Tabuleiro tabuleiro;
     bool turnoJogador;
 
+    int pontosJogador;
+    int pontosComputador;
+
+    sf::Font fonte;
+    sf::Text textoPlacar;
+    sf::RectangleShape botaoReset;
+    sf::Text textoReset;
+
 public:
-    JogoContraPC() : window(sf::VideoMode(1000, 600), "Dots - Player vs PC", sf::Style::Close | sf::Style::Titlebar), turnoJogador(true) {
+    JogoContraPC() :
+        window(sf::VideoMode(1000, 600), "Dots - Player vs PC", sf::Style::Close | sf::Style::Titlebar),
+        turnoJogador(true),
+        pontosJogador(0),
+        pontosComputador(0) {
+
         window.setFramerateLimit(90);
         srand(static_cast<unsigned>(time(0)));
+
+        fonte.loadFromFile("arial.ttf");
+
+        textoPlacar.setFont(fonte);
+        textoPlacar.setCharacterSize(24);
+        textoPlacar.setPosition(30, 30);
+        textoPlacar.setFillColor(sf::Color::Black);
+
+        botaoReset.setSize(sf::Vector2f(150, 40));
+        botaoReset.setFillColor(sf::Color(200, 200, 200));
+        botaoReset.setPosition(30, 500);
+
+        textoReset.setFont(fonte);
+        textoReset.setCharacterSize(20);
+        textoReset.setString("Reiniciar");
+        textoReset.setPosition(50, 510);
+        textoReset.setFillColor(sf::Color::Black);
     }
 
     void executar() {
@@ -226,41 +274,21 @@ public:
             tabuleiro.atualizar(mouseX, mouseY);
 
             while (window.pollEvent(event)) {
-                if (event.type == sf::Event::Closed) {
+                if (event.type == sf::Event::Closed)
                     window.close();
-                }
+
                 if (event.type == sf::Event::MouseButtonPressed) {
-                    if (turnoJogador) {
-                        bool fezPonto = false;
-                        bool linhaMarcada = false;
-
-                        auto& linhasVerticais = tabuleiro.getLinhasVerticais();
-                        auto& linhasHorizontais = tabuleiro.getLinhasHorizontais();
-
-                        for (int i = 0; i < 6 && !linhaMarcada; i++) {
-                            for (int j = 0; j < 7 && !linhaMarcada; j++) {
-                                if (linhasHorizontais[i][j].shape.getGlobalBounds().contains(mouseX, mouseY) && linhasHorizontais[i][j].estado == VAZIO) {
-                                    linhasHorizontais[i][j].estado = CHEIO;
-                                    linhasHorizontais[i][j].shape.setFillColor(sf::Color::Black);
-                                    linhaMarcada = true;
-                                    fezPonto = tabuleiro.verificarQuadradoFeito(JOGADOR);
-                                }
+                    if (botaoReset.getGlobalBounds().contains(mouseX, mouseY)) {
+                        resetarJogo();
+                    } else if (turnoJogador) {
+                        if (realizarCliqueJogador(mouseX, mouseY)) {
+                            bool fezPonto = tabuleiro.verificarQuadradoFeito(JOGADOR);
+                            if (fezPonto) {
+                                pontosJogador++;
                             }
-                        }
-
-                        for (int i = 0; i < 7 && !linhaMarcada; i++) {
-                            for (int j = 0; j < 6 && !linhaMarcada; j++) {
-                                if (linhasVerticais[i][j].shape.getGlobalBounds().contains(mouseX, mouseY) && linhasVerticais[i][j].estado == VAZIO) {
-                                    linhasVerticais[i][j].estado = CHEIO;
-                                    linhasVerticais[i][j].shape.setFillColor(sf::Color::Black);
-                                    linhaMarcada = true;
-                                    fezPonto = tabuleiro.verificarQuadradoFeito(JOGADOR);
-                                }
+                            if (!fezPonto) {
+                                turnoJogador = false;
                             }
-                        }
-
-                        if (linhaMarcada && !fezPonto) {
-                            turnoJogador = false;
                         }
                     }
                 }
@@ -271,18 +299,62 @@ public:
                 realizarJogadaComputador();
             }
 
-            window.clear(sf::Color(143, 188, 194));
+            atualizarTextoPlacar();
+
+            window.clear(sf::Color(133, 199, 194));
             tabuleiro.desenhar(window);
+            window.draw(textoPlacar);
+            window.draw(botaoReset);
+            window.draw(textoReset);
             window.display();
         }
     }
 
+    void atualizarTextoPlacar() {
+        textoPlacar.setString("Jogador: " + to_string(pontosJogador) +
+            "  PC: " + to_string(pontosComputador));
+    }
+
+    void resetarJogo() {
+        tabuleiro.reset();
+        pontosJogador = 0;
+        pontosComputador = 0;
+        turnoJogador = true;
+    }
+
+    bool realizarCliqueJogador(float mouseX, float mouseY) {
+        bool clicou = false;
+        auto& linhasVerticais = tabuleiro.getLinhasVerticais();
+        auto& linhasHorizontais = tabuleiro.getLinhasHorizontais();
+
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 6; j++) {
+                if (linhasVerticais[i][j].shape.getGlobalBounds().contains(mouseX, mouseY)
+                    && linhasVerticais[i][j].estado == VAZIO) {
+                    linhasVerticais[i][j].estado = CHEIO;
+                    clicou = true;
+                }
+            }
+        }
+
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 7; j++) {
+                if (linhasHorizontais[i][j].shape.getGlobalBounds().contains(mouseX, mouseY)
+                    && linhasHorizontais[i][j].estado == VAZIO) {
+                    linhasHorizontais[i][j].estado = CHEIO;
+                    clicou = true;
+                }
+            }
+        }
+
+        return clicou;
+    }
+
     void realizarJogadaComputador() {
         bool jogando = true;
-
         while (jogando) {
             jogando = false;
-            vector<Linha*> linhasDisponiveis;
+            std::vector<Linha*> linhasDisponiveis;
 
             auto& linhasVerticais = tabuleiro.getLinhasVerticais();
             auto& linhasHorizontais = tabuleiro.getLinhasHorizontais();
@@ -306,10 +378,10 @@ public:
             if (!linhasDisponiveis.empty()) {
                 int indice = rand() % linhasDisponiveis.size();
                 linhasDisponiveis[indice]->estado = CHEIO;
-                linhasDisponiveis[indice]->shape.setFillColor(sf::Color::Black);
 
                 bool fezPonto = tabuleiro.verificarQuadradoFeito(COMPUTADOR);
                 if (fezPonto) {
+                    pontosComputador++;
                     jogando = true;
                     sf::sleep(sf::milliseconds(300));
                 } else {
@@ -320,6 +392,7 @@ public:
     }
 };
 
+// ================= MAIN =================
 int main() {
     JogoContraPC jogo;
     jogo.executar();
