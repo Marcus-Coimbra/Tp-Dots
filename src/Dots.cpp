@@ -228,10 +228,10 @@ class Player {
 public:
 	EstadoPonto ponto;
 	int pontuacao;
-	Quadrado* quadrados[6][6];
+	Quadrado *quadrados[6][6];
 
 	Player(EstadoPonto ponto) :
-	    ponto(ponto), pontuacao(0) {
+			ponto(ponto), pontuacao(0) {
 	}
 
 	void AtualizaQuadrado() {
@@ -252,7 +252,6 @@ public:
 		}
 		pontuacao += novosPontos;
 	}
-
 
 	int getPontuacao() const {
 		return pontuacao;
