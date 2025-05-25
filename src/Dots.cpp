@@ -280,17 +280,25 @@ public:
 		jogadorAtual = &jogador1;
 
 		window.setFramerateLimit(60);
-		//imagem restart
+		// imagem restart
 		TextureRestartImage.loadFromFile("Imagens/reiniciar.png");
+		TextureRestartImage.setSmooth(true);
 		RestartImage.setTexture(TextureRestartImage, true);
-		RestartImage.setTextureRect(sf::IntRect(0,0,50,50));
-		RestartImage.setPosition(450, 500);
-		//imagem you win
+		RestartImage.setScale(0.1f,0.1f);
+		RestartImage.setPosition(475, 525);
+		// imagem you win
 		TextureYouWinImage.loadFromFile("Imagens/you-win.png");
+		TextureYouWinImage.setSmooth(true);
 		YouWinImage.setTexture(TextureYouWinImage, true);
-		//imagem you lose
+		YouWinImage.setScale(0.6f, 0.6f);  // Ajuste proporcional
+		YouWinImage.setPosition(295, 75);  // Ajuste a posição se necessário
+		// imagem you lose
 		TextureYouLoseImage.loadFromFile("Imagens/you-lose.png");
+		TextureYouLoseImage.setSmooth(true);
 		YouLoseImage.setTexture(TextureYouLoseImage, true);
+		YouLoseImage.setScale(0.6f, 0.6f);  // Ajuste proporcional
+		YouLoseImage.setPosition(295, 75);  // Ajuste a posição se necessário
+
 
 		for (int i = 0; i < 6; i++)
 			for (int j = 0; j < 6; j++) {
@@ -303,6 +311,15 @@ public:
 		}
 		if (!bufferPonto.loadFromFile("Sons/ponto.ogg")) {
 			printf("Erro ao carregar ponto.ogg\n");
+		}
+		if (!TextureRestartImage.loadFromFile("Imagens/reiniciar.png")) {
+		    printf("Erro ao carregar reiniciar.png\n");
+		}
+		if (!TextureYouWinImage.loadFromFile("Imagens/you-win.png")) {
+		    printf("Erro ao carregar you-win.png\n");
+		}
+		if (!TextureYouLoseImage.loadFromFile("Imagens/you-lose.png")) {
+		    printf("Erro ao carregar you-lose.png\n");
 		}
 
 		somLinha.setBuffer(bufferLinha);
@@ -488,8 +505,10 @@ public:
 
 					jogadorAtual->setPontuacao(depois);
 
-					if (depois == antes)
+					// Se não marcou ponto, troca turno
+					if (depois == antes) {
 						trocarTurno();
+					}
 				}
 			}
 		}
@@ -500,12 +519,12 @@ public:
 		if (jogoTerminado()) {
 			if (jogador1.getPontuacao() > jogador2.getPontuacao()) {
 				YouWinImage.setTexture(TextureYouWinImage);
-				YouWinImage.setTextureRect(sf::IntRect(175,175,175,175));
+				YouWinImage.setTextureRect(sf::IntRect(0,0,350,350));
 				YouWinImage.setPosition(295, 75);
 				window.draw(YouWinImage);
 			} else {
 				YouLoseImage.setTexture(TextureYouLoseImage);
-				YouLoseImage.setTextureRect(sf::IntRect(175,175,175,175));
+				YouLoseImage.setTextureRect(sf::IntRect(0,0,350,350));
 				YouLoseImage.setPosition(295, 75);
 				window.draw(YouLoseImage);
 			}
