@@ -221,13 +221,24 @@ public:
 
 class Player {
 public:
-
 	sf::Color cor;
+	int pontuacao;
 
-	Player() : cor(sf::Color::Blue) {
+	Player() : cor(sf::Color::Blue), pontuacao(0){}
 
+	void adicionarPonto() {
+		pontuacao++;
+	}
+
+	int getPontuacao() const {
+		return pontuacao;
+	}
+
+	sf::Color getCor() const {
+		return cor;
 	}
 };
+
 
 class Jogo {
 private:
