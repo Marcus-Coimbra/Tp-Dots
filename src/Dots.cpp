@@ -1,7 +1,5 @@
 #include <SFML/Graphics.hpp>
-#include <iostream>
 #include <vector>
-#include <cstdlib>
 #include <ctime>
 
 using namespace std;
@@ -87,14 +85,10 @@ public:
     }
 
     bool checarPonto(Dono atual) {
-        if (dono == NENHUM &&
-            linhaSuperior->estado == CHEIO &&
-            linhaInferior->estado == CHEIO &&
-            linhaEsquerda->estado == CHEIO &&
-            linhaDireita->estado == CHEIO) {
+        if (dono == NENHUM && linhaSuperior->estado == CHEIO && linhaInferior->estado == CHEIO && linhaEsquerda->estado == CHEIO && linhaDireita->estado == CHEIO) {
             dono = atual;
             return true;
-        } else{
+        } else {
             return false;
         }
     }
@@ -108,7 +102,6 @@ class Tabuleiro {
 private:
     Linha linhasVerticais[7][6];
     Linha linhasHorizontais[6][7];
-
     Quadrado quadrados[6][6];
 
     const int dim = 50;
@@ -144,9 +137,9 @@ public:
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
                 quadrados[i][j].linhaSuperior = &linhasHorizontais[i][j];
-                quadrados[i][j].linhaInferior = &linhasHorizontais[i][j+1];
+                quadrados[i][j].linhaInferior = &linhasHorizontais[i][j + 1];
                 quadrados[i][j].linhaEsquerda = &linhasVerticais[i][j];
-                quadrados[i][j].linhaDireita = &linhasVerticais[i+1][j];
+                quadrados[i][j].linhaDireita = &linhasVerticais[i + 1][j];
             }
         }
     }
@@ -219,10 +212,7 @@ private:
     bool turnoJogador;
 
 public:
-    JogoContraPC() :
-        window(sf::VideoMode(1000, 600), "Dots - Player vs PC",
-            sf::Style::Close | sf::Style::Titlebar),
-        turnoJogador(true) {
+    JogoContraPC() : window(sf::VideoMode(1000, 600), "Dots - Player vs PC", sf::Style::Close | sf::Style::Titlebar), turnoJogador(true) {
         window.setFramerateLimit(90);
         srand(static_cast<unsigned>(time(0)));
     }
@@ -236,10 +226,10 @@ public:
             tabuleiro.atualizar(mouseX, mouseY);
 
             while (window.pollEvent(event)) {
-                if (event.type == sf::Event::Closed)
+                if (event.type == sf::Event::Closed) {
                     window.close();
-
-                if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+                }
+                if (event.type == sf::Event::MouseButtonPressed) {
                     if (turnoJogador) {
                         bool fezPonto = false;
                         bool linhaMarcada = false;
@@ -247,30 +237,24 @@ public:
                         auto& linhasVerticais = tabuleiro.getLinhasVerticais();
                         auto& linhasHorizontais = tabuleiro.getLinhasHorizontais();
 
-                        // Tenta marcar linha horizontal
                         for (int i = 0; i < 6 && !linhaMarcada; i++) {
                             for (int j = 0; j < 7 && !linhaMarcada; j++) {
-                                if (linhasHorizontais[i][j].shape.getGlobalBounds().contains(mouseX, mouseY)) {
-                                    if (linhasHorizontais[i][j].estado == VAZIO) {
-                                        linhasHorizontais[i][j].estado = CHEIO;
-                                        linhasHorizontais[i][j].shape.setFillColor(sf::Color::Black);
-                                        linhaMarcada = true;
-                                        fezPonto = tabuleiro.verificarQuadradoFeito(JOGADOR);
-                                    }
+                                if (linhasHorizontais[i][j].shape.getGlobalBounds().contains(mouseX, mouseY) && linhasHorizontais[i][j].estado == VAZIO) {
+                                    linhasHorizontais[i][j].estado = CHEIO;
+                                    linhasHorizontais[i][j].shape.setFillColor(sf::Color::Black);
+                                    linhaMarcada = true;
+                                    fezPonto = tabuleiro.verificarQuadradoFeito(JOGADOR);
                                 }
                             }
                         }
 
-                        // Tenta marcar linha vertical
                         for (int i = 0; i < 7 && !linhaMarcada; i++) {
                             for (int j = 0; j < 6 && !linhaMarcada; j++) {
-                                if (linhasVerticais[i][j].shape.getGlobalBounds().contains(mouseX, mouseY)) {
-                                    if (linhasVerticais[i][j].estado == VAZIO) {
-                                        linhasVerticais[i][j].estado = CHEIO;
-                                        linhasVerticais[i][j].shape.setFillColor(sf::Color::Black);
-                                        linhaMarcada = true;
-                                        fezPonto = tabuleiro.verificarQuadradoFeito(JOGADOR);
-                                    }
+                                if (linhasVerticais[i][j].shape.getGlobalBounds().contains(mouseX, mouseY) && linhasVerticais[i][j].estado == VAZIO) {
+                                    linhasVerticais[i][j].estado = CHEIO;
+                                    linhasVerticais[i][j].shape.setFillColor(sf::Color::Black);
+                                    linhaMarcada = true;
+                                    fezPonto = tabuleiro.verificarQuadradoFeito(JOGADOR);
                                 }
                             }
                         }
@@ -287,7 +271,7 @@ public:
                 realizarJogadaComputador();
             }
 
-            window.clear(sf::Color(150, 150, 150)); // fundo cinza claro
+            window.clear(sf::Color(143, 188, 194));
             tabuleiro.desenhar(window);
             window.display();
         }
@@ -295,9 +279,10 @@ public:
 
     void realizarJogadaComputador() {
         bool jogando = true;
+
         while (jogando) {
             jogando = false;
-            std::vector<Linha*> linhasDisponiveis;
+            vector<Linha*> linhasDisponiveis;
 
             auto& linhasVerticais = tabuleiro.getLinhasVerticais();
             auto& linhasHorizontais = tabuleiro.getLinhasHorizontais();
