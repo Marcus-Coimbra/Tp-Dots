@@ -274,9 +274,9 @@ public:
 				jogador2.quadrados[i][j] = &tabuleiro.quadrados[i][j];
 			}
 
-		if (!bufferLinha.loadFromFile("linha.ogg"))
+		if (!bufferLinha.loadFromFile("Sons/linha.ogg"))
 			printf("Erro ao carregar linha.ogg\n");
-		if (!bufferPonto.loadFromFile("ponto.ogg"))
+		if (!bufferPonto.loadFromFile("Sons/ponto.ogg"))
 			printf("Erro ao carregar ponto.ogg\n");
 
 		somLinha.setBuffer(bufferLinha);
