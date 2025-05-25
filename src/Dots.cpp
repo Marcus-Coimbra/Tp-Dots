@@ -283,7 +283,7 @@ public:
 
 public:
 	Jogo() :
-			window(sf::VideoMode(1000, 600), "Dots version 1.2",
+			window(sf::VideoMode(1000, 600), "Dots version 2.0",
 					sf::Style::Close | sf::Style::Titlebar), jogador1(JOGADOR1), jogador2(
 					JOGADOR2) {
 
