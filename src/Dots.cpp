@@ -94,8 +94,9 @@ public:
             linhaDireita->estado == CHEIO) {
             dono = atual;
             return true;
+        } else{
+            return false;
         }
-        return false;
     }
 
     void desenhar(sf::RenderWindow& window) {
@@ -143,9 +144,9 @@ public:
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
                 quadrados[i][j].linhaSuperior = &linhasHorizontais[i][j];
-                quadrados[i][j].linhaInferior = &linhasHorizontais[i][j + 1];
+                quadrados[i][j].linhaInferior = &linhasHorizontais[i][j+1];
                 quadrados[i][j].linhaEsquerda = &linhasVerticais[i][j];
-                quadrados[i][j].linhaDireita = &linhasVerticais[i + 1][j];
+                quadrados[i][j].linhaDireita = &linhasVerticais[i+1][j];
             }
         }
     }
