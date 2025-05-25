@@ -1,326 +1,272 @@
 #include <SFML/Graphics.hpp>
-#include <vector>
-#include <ctime>
+#include <cstring>
 
 using namespace std;
 
 enum Clik {
-    VAZIO, CHEIO
-};
-
-enum Dono {
-    NENHUM, JOGADOR, COMPUTADOR
+	VAZIO, CHEIO
 };
 
 class Linha {
 public:
-    sf::RectangleShape shape;
-    Clik estado;
+	sf::RectangleShape shape;
+	Clik estado;
 
-    Linha() : estado(VAZIO) {
-        shape.setSize(sf::Vector2f(0, 0));
-        shape.setPosition(0, 0);
-        shape.setFillColor(sf::Color(0, 0, 0, 0));
-    }
+	Linha() :
+			estado(VAZIO) { //lista de inicialização
+		shape.setSize(sf::Vector2f(0, 0));
+		shape.setPosition(0, 0);
+		shape.setFillColor(sf::Color(0, 0, 0, 0));
+	}
 
-    Linha(float x, float y, float width, float height) {
-        shape.setSize(sf::Vector2f(width, height));
-        shape.setPosition(x, y);
-        shape.setFillColor(sf::Color(0, 0, 0, 0));
-        estado = VAZIO;
-    }
+	Linha(float x, float y, float width, float height) {
+		shape.setSize(sf::Vector2f(width, height));
+		shape.setPosition(x, y);
+		shape.setFillColor(sf::Color(0, 0, 0, 0)); //cor transparente para se juntar a tela indenpendete de sua cor
+		estado = VAZIO;
+	}
 
-    void atualizar(float mouseX, float mouseY) {
-        if (shape.getGlobalBounds().contains(mouseX, mouseY)) {
-            if (estado == CHEIO) {
-                shape.setFillColor(sf::Color::Black);
-            } else {
-                shape.setFillColor(sf::Color(0, 0, 0, 100));
-            }
-        } else {
-            if (estado == CHEIO) {
-                shape.setFillColor(sf::Color::Black);
-            } else {
-                shape.setFillColor(sf::Color(0, 0, 0, 0));
-            }
-        }
-    }
+	void atualizar(float mouseX, float mouseY) {
+		//verifica as linhas e modifica a cor de acordo com a posição do mouse
+		if (shape.getGlobalBounds().contains(mouseX, mouseY)) {
+			if (estado == CHEIO) {
+				shape.setFillColor(sf::Color::Black);
+			} else {
+				shape.setFillColor(sf::Color(0, 0, 0, 130)); // semi-transparente
+			}
+		} else {
+			if (estado == CHEIO) {
+				shape.setFillColor(sf::Color::Black);
+			} else {
+				shape.setFillColor(sf::Color(0, 0, 0, 0)); // transparente
+			}
+		}
+	}
 
-    void desenhar(sf::RenderWindow& window) {
-        window.draw(shape);
-    }
+	void checarClique(float mouseX, float mouseY) {
+		//Se o mouse estiver sobre a linha quando clicado, muda seu estado para CHEIO
+		if (shape.getGlobalBounds().contains(mouseX, mouseY)
+				&& estado == VAZIO) { // garante que só possa ser atribuido valor 1 vez
+			estado = CHEIO;
+		}
+	}
+
+	void desenhar(sf::RenderWindow &window) {
+		window.draw(shape);
+	}
 };
 
 class Quadrado {
 public:
-    sf::RectangleShape shape;
-    Dono dono;
+	sf::RectangleShape shape;
+	Clik ponto;
 
-    Linha* linhaSuperior;
-    Linha* linhaInferior;
-    Linha* linhaEsquerda;
-    Linha* linhaDireita;
+	Linha *linhaSuperior;
+	Linha *linhaInferior;
+	Linha *linhaEsquerda;
+	Linha *linhaDireita;
 
-    Quadrado() : dono(NENHUM), linhaSuperior(nullptr), linhaInferior(nullptr), linhaEsquerda(nullptr), linhaDireita(nullptr) {
-        shape.setSize(sf::Vector2f(0, 0));
-        shape.setPosition(0, 0);
-        shape.setFillColor(sf::Color(0, 0, 0, 0));
-    }
+	Quadrado() :
+			ponto(VAZIO), linhaSuperior(nullptr), linhaInferior(nullptr), linhaEsquerda(
+					nullptr), linhaDireita(nullptr) {
+		shape.setSize(sf::Vector2f(0, 0));
+		shape.setPosition(0, 0);
+		shape.setFillColor(sf::Color(0, 0, 0, 0));
+	}
 
-    Quadrado(float x, float y, float dim) : linhaSuperior(nullptr), linhaInferior(nullptr), linhaEsquerda(nullptr), linhaDireita(nullptr) {
-        shape.setSize(sf::Vector2f(dim, dim));
-        shape.setPosition(x, y);
-        shape.setFillColor(sf::Color(0, 0, 0, 0));
-        dono = NENHUM;
-    }
+	Quadrado(float x, float y, float dim) :
+			linhaSuperior(nullptr), linhaInferior(nullptr), linhaEsquerda(
+					nullptr), linhaDireita(nullptr) //lista de inicialização de ponteiros
+	{
+		shape.setSize(sf::Vector2f(dim, dim));
+		shape.setPosition(x, y);
+		shape.setFillColor(sf::Color(0, 0, 0, 0)); //cor transparente para se juntar a tela indenpendete de sua cor
+		ponto = VAZIO;
+	}
 
-    void atualizar() {
-        if (dono == JOGADOR) {
-            shape.setFillColor(sf::Color::Blue);
-        } else if (dono == COMPUTADOR) {
-            shape.setFillColor(sf::Color::Red);
-        } else {
-            shape.setFillColor(sf::Color(0, 0, 0, 0));
-        }
-    }
+	void atualizar() {
+		if (ponto == CHEIO) {
+			shape.setFillColor(sf::Color::Blue);
+		} else {
+			shape.setFillColor(sf::Color(0, 0, 0, 0));
+		}
+	}
 
-    bool checarPonto(Dono atual) {
-        if (dono == NENHUM && linhaSuperior->estado == CHEIO && linhaInferior->estado == CHEIO && linhaEsquerda->estado == CHEIO && linhaDireita->estado == CHEIO) {
-            dono = atual;
-            return true;
-        } else {
-            return false;
-        }
-    }
+	void checarPonto() {
+		// verifica as 4 linhas entorno do qudrado
+		if (linhaSuperior->estado == CHEIO && linhaInferior->estado == CHEIO
+				&& linhaEsquerda->estado == CHEIO
+				&& linhaDireita->estado == CHEIO) {
+			ponto = CHEIO;
+		}
+	}
 
-    void desenhar(sf::RenderWindow& window) {
-        window.draw(shape);
-    }
+	void desenhar(sf::RenderWindow &window) {
+		window.draw(shape);
+	}
 };
 
 class Tabuleiro {
 private:
-    Linha linhasVerticais[7][6];
-    Linha linhasHorizontais[6][7];
-    Quadrado quadrados[6][6];
+	Linha linhasVerticais[7][6];
+	Linha linhasHorizontais[6][7];
 
-    const int dim = 50;
-    const int gros = 8;
-    const int space = 2 * gros;
+	Quadrado quadrados[6][6];
+
+	const int dim = 50;
+	const int gros = 8;
+	const int space = 2 * gros;
 
 public:
-    Tabuleiro() {
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 6; j++) {
-                float x = (i * dim) + (i * space) + 375;
-                float y = (j * dim) + (j * space) + 80 + gros;
-                linhasVerticais[i][j] = Linha(x, y, gros, dim);
-            }
-        }
+	Tabuleiro() {
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 6; j++) {
+				float x = (i * dim) + (i * space) + 295;
+				float y = (j * dim) + (j * space) + 80 + gros;
 
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 7; j++) {
-                float x = (i * dim) + (i * space) + 380 + gros;
-                float y = (j * dim) + (j * space) + 75;
-                linhasHorizontais[i][j] = Linha(x, y, dim, gros);
-            }
-        }
+				linhasVerticais[i][j] = Linha(x, y, gros, dim);
+			}
+		}
 
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 6; j++) {
-                float x = (i * dim) + (i * space) + 375 + gros;
-                float y = (j * dim) + (j * space) + 75 + gros;
-                quadrados[i][j] = Quadrado(x, y, dim + gros);
-            }
-        }
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 7; j++) {
+				float x = (i * dim) + (i * space) + 300 + gros;
+				float y = (j * dim) + (j * space) + 75;
 
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 6; j++) {
-                quadrados[i][j].linhaSuperior = &linhasHorizontais[i][j];
-                quadrados[i][j].linhaInferior = &linhasHorizontais[i][j + 1];
-                quadrados[i][j].linhaEsquerda = &linhasVerticais[i][j];
-                quadrados[i][j].linhaDireita = &linhasVerticais[i + 1][j];
-            }
-        }
-    }
+				linhasHorizontais[i][j] = Linha(x, y, dim, gros);
+			}
+		}
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 6; j++) {
+				float x = (i * dim) + (i * space) + 295 + gros;
+				float y = (j * dim) + (j * space) + 75 + gros;
 
-    void atualizar(float mouseX, float mouseY) {
-        for (int i = 0; i < 7; i++)
-            for (int j = 0; j < 6; j++)
-                linhasVerticais[i][j].atualizar(mouseX, mouseY);
+				quadrados[i][j] = Quadrado(x, y, dim + gros); // + gros e pra completar o espaço faltante
+			}
+		}
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 6; j++) {
+				// Cálculo para verificar linhas horizontais e verticais
+				quadrados[i][j].linhaSuperior = &linhasHorizontais[i][j];
+				quadrados[i][j].linhaInferior = &linhasHorizontais[i][j + 1];
+				quadrados[i][j].linhaEsquerda = &linhasVerticais[i][j];
+				quadrados[i][j].linhaDireita = &linhasVerticais[i + 1][j];
+			}
+		}
+	}
 
-        for (int i = 0; i < 6; i++)
-            for (int j = 0; j < 7; j++)
-                linhasHorizontais[i][j].atualizar(mouseX, mouseY);
+	void atualizar(float mouseX, float mouseY) {
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 6; j++) {
+				linhasVerticais[i][j].atualizar(mouseX, mouseY);
+			}
+		}
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 7; j++) {
+				linhasHorizontais[i][j].atualizar(mouseX, mouseY);
+			}
+		}
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 6; j++) {
+				quadrados[i][j].checarPonto();
+				quadrados[i][j].atualizar();
+			}
+		}
+	}
 
-        for (int i = 0; i < 6; i++)
-            for (int j = 0; j < 6; j++)
-                quadrados[i][j].atualizar();
-    }
+	void checarClique(float mouseX, float mouseY) {
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 6; j++) {
+				linhasVerticais[i][j].checarClique(mouseX, mouseY);
+			}
+		}
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 7; j++) {
+				linhasHorizontais[i][j].checarClique(mouseX, mouseY);
+			}
+		}
+	}
 
-    bool verificarQuadradoFeito(Dono atual) {
-        bool fezPonto = false;
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 6; j++) {
-                if (quadrados[i][j].checarPonto(atual)) {
-                    fezPonto = true;
-                }
-            }
-        }
-        return fezPonto;
-    }
+	void desenhar(sf::RenderWindow &window) {
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 6; j++) {
+				linhasVerticais[i][j].desenhar(window);
+			}
+		}
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 7; j++) {
+				linhasHorizontais[i][j].desenhar(window);
+			}
+		}
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 6; j++) {
+				quadrados[i][j].desenhar(window);
+			}
+		}
 
-    void desenhar(sf::RenderWindow& window) {
-        for (int i = 0; i < 7; i++)
-            for (int j = 0; j < 6; j++)
-                linhasVerticais[i][j].desenhar(window);
-
-        for (int i = 0; i < 6; i++)
-            for (int j = 0; j < 7; j++)
-                linhasHorizontais[i][j].desenhar(window);
-
-        for (int i = 0; i < 6; i++)
-            for (int j = 0; j < 6; j++)
-                quadrados[i][j].desenhar(window);
-
-        const float raio = 10.0f;
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 7; j++) {
-                float x = (i * dim) + (i * space) + 379;
-                float y = (j * dim) + (j * space) + 79;
-                sf::CircleShape ponto(raio);
-                ponto.setFillColor(sf::Color(255, 255, 255));
-                ponto.setPosition(x - raio, y - raio);
-                window.draw(ponto);
-            }
-        }
-    }
-
-    Linha(&getLinhasVerticais())[7][6] {
-        return linhasVerticais;
-    }
-
-    Linha(&getLinhasHorizontais())[6][7] {
-        return linhasHorizontais;
-    }
+// Desenhar pontos brancos nos entre os espaços
+		const float raio = 10.0f;
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 7; j++) {
+				float x = (i * dim) + (i * space) + 299;
+				float y = (j * dim) + (j * space) + 79;
+				sf::CircleShape ponto(raio);
+				ponto.setFillColor(sf::Color(255, 255, 255));
+				ponto.setPosition(x - raio, y - raio);
+				window.draw(ponto);
+			}
+		}
+	}
 };
 
-class JogoContraPC {
+class Player {
+public:
+
+	sf::Color cor;
+
+	Player() : cor(sf::Color::Blue) {
+
+	}
+};
+
+class Jogo {
 private:
-    sf::RenderWindow window;
-    Tabuleiro tabuleiro;
-    bool turnoJogador;
+	sf::RenderWindow window;
+	Tabuleiro tabuleiro;
 
 public:
-    JogoContraPC() : window(sf::VideoMode(1000, 600), "Dots - Player vs PC", sf::Style::Close | sf::Style::Titlebar), turnoJogador(true) {
-        window.setFramerateLimit(90);
-        srand(static_cast<unsigned>(time(0)));
-    }
+	Jogo() : //lista de inicialização para membro janela
+			window(sf::VideoMode(1000, 600), "Dots version 1.2",
+					sf::Style::Close | sf::Style::Titlebar) {
+		window.setFramerateLimit(90);
+	}
 
-    void executar() {
-        while (window.isOpen()) {
-            sf::Event event;
-            float mouseX = sf::Mouse::getPosition(window).x;
-            float mouseY = sf::Mouse::getPosition(window).y;
+	void open() {
+		while (window.isOpen()) {
+			sf::Event event;
+			float mouseX = sf::Mouse::getPosition(window).x;
+			float mouseY = sf::Mouse::getPosition(window).y;
 
-            tabuleiro.atualizar(mouseX, mouseY);
+			tabuleiro.atualizar(mouseX, mouseY);
 
-            while (window.pollEvent(event)) {
-                if (event.type == sf::Event::Closed) {
-                    window.close();
-                }
-                if (event.type == sf::Event::MouseButtonPressed) {
-                    if (turnoJogador) {
-                        bool fezPonto = false;
-                        bool linhaMarcada = false;
+			while (window.pollEvent(event)) {
+				if (event.type == sf::Event::Closed)
+					window.close();
 
-                        auto& linhasVerticais = tabuleiro.getLinhasVerticais();
-                        auto& linhasHorizontais = tabuleiro.getLinhasHorizontais();
+				if (event.type == sf::Event::MouseButtonPressed)
+					tabuleiro.checarClique(mouseX, mouseY);
+			}
 
-                        for (int i = 0; i < 6 && !linhaMarcada; i++) {
-                            for (int j = 0; j < 7 && !linhaMarcada; j++) {
-                                if (linhasHorizontais[i][j].shape.getGlobalBounds().contains(mouseX, mouseY) && linhasHorizontais[i][j].estado == VAZIO) {
-                                    linhasHorizontais[i][j].estado = CHEIO;
-                                    linhasHorizontais[i][j].shape.setFillColor(sf::Color::Black);
-                                    linhaMarcada = true;
-                                    fezPonto = tabuleiro.verificarQuadradoFeito(JOGADOR);
-                                }
-                            }
-                        }
-
-                        for (int i = 0; i < 7 && !linhaMarcada; i++) {
-                            for (int j = 0; j < 6 && !linhaMarcada; j++) {
-                                if (linhasVerticais[i][j].shape.getGlobalBounds().contains(mouseX, mouseY) && linhasVerticais[i][j].estado == VAZIO) {
-                                    linhasVerticais[i][j].estado = CHEIO;
-                                    linhasVerticais[i][j].shape.setFillColor(sf::Color::Black);
-                                    linhaMarcada = true;
-                                    fezPonto = tabuleiro.verificarQuadradoFeito(JOGADOR);
-                                }
-                            }
-                        }
-
-                        if (linhaMarcada && !fezPonto) {
-                            turnoJogador = false;
-                        }
-                    }
-                }
-            }
-
-            if (!turnoJogador) {
-                sf::sleep(sf::milliseconds(500));
-                realizarJogadaComputador();
-            }
-
-            window.clear(sf::Color(143, 188, 194));
-            tabuleiro.desenhar(window);
-            window.display();
-        }
-    }
-
-void realizarJogadaComputador() {
-	bool jogando = true;
-
-    while (jogando) {
-    jogando = false;
-    vector<Linha*> linhasDisponiveis;
-
-    auto& linhasVerticais = tabuleiro.getLinhasVerticais();
-    auto& linhasHorizontais = tabuleiro.getLinhasHorizontais();
-
-    	for (int i = 0; i < 7; i++) {
-    		for (int j = 0; j < 6; j++) {
-    			if (linhasVerticais[i][j].estado == VAZIO) {
-    				linhasDisponiveis.push_back(&linhasVerticais[i][j]);
-                }
-            }
-        }
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 7; j++) {
-                if (linhasHorizontais[i][j].estado == VAZIO) {
-                	linhasDisponiveis.push_back(&linhasHorizontais[i][j]);
-                }
-            }
-        }
-        if (!linhasDisponiveis.empty()) {
-
-        	int indice = rand() % linhasDisponiveis.size();
-            linhasDisponiveis[indice]->estado = CHEIO;
-            linhasDisponiveis[indice]->shape.setFillColor(sf::Color::Black);
-
-            bool fezPonto = tabuleiro.verificarQuadradoFeito(COMPUTADOR);
-                if (fezPonto) {
-                    jogando = true;
-                    sf::sleep(sf::milliseconds(300));
-                } else {
-                    turnoJogador = true;
-               	}
-           	}
-      	}
-    }
+			window.clear(sf::Color(14, 230, 64));
+			tabuleiro.desenhar(window);
+			window.display();
+		}
+	}
 };
 
 int main() {
-    JogoContraPC jogo;
-    jogo.executar();
-    return 0;
+	Jogo jogo;
+	jogo.open();
+
+	return 0;
 }
