@@ -21,9 +21,6 @@ public:
 
 	Linha() :
 			estado(VAZIO) {
-		shape.setSize(sf::Vector2f(0, 0));
-		shape.setPosition(0, 0);
-		shape.setFillColor(sf::Color(0, 0, 0, 0));
 	}
 
 	Linha(float x, float y, float width, float height) {
@@ -38,7 +35,7 @@ public:
 			if (estado == CHEIO)
 				shape.setFillColor(sf::Color::Black);
 			else
-				shape.setFillColor(sf::Color(0, 0, 0, 130));
+				shape.setFillColor(sf::Color(0, 0, 0, 130)); //semi transparente
 		} else {
 			if (estado == CHEIO)
 				shape.setFillColor(sf::Color::Black);
@@ -70,9 +67,6 @@ public:
 	Quadrado() :
 			ponto(NENHUM), turno(JOGADOR1), linhaSuperior(nullptr), linhaInferior(
 					nullptr), linhaEsquerda(nullptr), linhaDireita(nullptr) {
-		shape.setSize(sf::Vector2f(0, 0));
-		shape.setPosition(0, 0);
-		shape.setFillColor(sf::Color(0, 0, 0, 0));
 	}
 
 	Quadrado(float x, float y, float dim) :
@@ -161,15 +155,15 @@ public:
 				linhasHorizontais[i][j].atualizar(mouseX, mouseY);
 	}
 
-	bool checarClique(float mouseX, float mouseY, EstadoPonto turnoAtual) {
-		bool clicou = false;
+	Clik checarClique(float mouseX, float mouseY, EstadoPonto turnoAtual) {
+		Clik clicou = VAZIO;
 		for (int i = 0; i < 7; i++) {
 			for (int j = 0; j < 6; j++) {
 				if (linhasVerticais[i][j].shape.getGlobalBounds().contains(
 						mouseX, mouseY)
 						&& linhasVerticais[i][j].estado == VAZIO) {
 					linhasVerticais[i][j].estado = CHEIO;
-					clicou = true;
+					clicou = CHEIO;
 				}
 			}
 		}
@@ -179,7 +173,7 @@ public:
 						mouseX, mouseY)
 						&& linhasHorizontais[i][j].estado == VAZIO) {
 					linhasHorizontais[i][j].estado = CHEIO;
-					clicou = true;
+					clicou = CHEIO;
 				}
 			}
 		}
@@ -246,9 +240,11 @@ public:
 	int getPontuacao() const {
 		return pontuacao;
 	}
+
 	void setPontuacao(int p) {
 		pontuacao = p;
 	}
+
 };
 
 class Jogo {
@@ -351,12 +347,12 @@ public:
 	}
 
 private:
-	bool jogoTerminado() {
+	Clik jogoTerminado() {
 		for (int i = 0; i < 6; i++)
 			for (int j = 0; j < 6; j++)
 				if (tabuleiro.quadrados[i][j].ponto == NENHUM)
-					return false;
-		return true;
+					return VAZIO;
+		return CHEIO;
 	}
 
 public:
@@ -414,10 +410,13 @@ public:
 				if (ladosCheios == 3 && q.ponto == NENHUM) {
 					if (q.linhaSuperior->estado == VAZIO)
 						q.linhaSuperior->estado = CHEIO;
+
 					else if (q.linhaInferior->estado == VAZIO)
 						q.linhaInferior->estado = CHEIO;
+
 					else if (q.linhaEsquerda->estado == VAZIO)
 						q.linhaEsquerda->estado = CHEIO;
+
 					else if (q.linhaDireita->estado == VAZIO)
 						q.linhaDireita->estado = CHEIO;
 
@@ -427,9 +426,9 @@ public:
 					jogadorAtual->AtualizaQuadrado();
 
 					int depois = 0;
-					for (int m = 0; m < 6; m++) {
-						for (int n = 0; n < 6; n++) {
-							if (tabuleiro.quadrados[m][n].ponto
+					for (int i = 0; i < 6; i++) {
+						for (int j = 0; j < 6; j++) {
+							if (tabuleiro.quadrados[i][j].ponto
 									== jogadorAtual->ponto) {
 								depois++;
 							}
@@ -438,6 +437,7 @@ public:
 
 					if (depois > antes)
 						somPonto.play();
+
 					jogadorAtual->setPontuacao(depois);
 					if (depois == antes)
 						trocarTurno();
@@ -465,6 +465,7 @@ public:
 		}
 
 		if (!linhasVazias.empty()) {
+
 			int indice = rand() % linhasVazias.size();
 			linhasVazias[indice]->estado = CHEIO;
 			somLinha.play();
@@ -485,6 +486,7 @@ public:
 			if (depois > antes)
 				somPonto.play();
 			jogadorAtual->setPontuacao(depois);
+
 			if (depois == antes)
 				trocarTurno();
 		}
@@ -501,7 +503,7 @@ public:
 					reiniciarJogo();
 					return; // Evita qualquer outra ação neste clique
 				}
-				bool clicou = tabuleiro.checarClique(mouseX, mouseY,
+				Clik clicou = tabuleiro.checarClique(mouseX, mouseY,
 						jogadorAtual->ponto);
 				if (clicou) {
 					somLinha.play(); // Linha feita
@@ -534,7 +536,7 @@ public:
 		// Verifica se o jogo terminou e mostra o resultado
 		if (jogoTerminado()) {
 			if (jogador1.getPontuacao() > jogador2.getPontuacao()) {
-				YouWinImage.setTexture(TextureYouWinImage, true);
+				YouWinImage.setTexture(TextureYouWinImage, CHEIO);
 				YouWinImage.setPosition(240, 20);
 				window.draw(YouWinImage);
 
@@ -544,7 +546,7 @@ public:
 				somWin.getLoop();
 				somWin.play();
 			} else {
-				YouLoseImage.setTexture(TextureYouLoseImage, true);
+				YouLoseImage.setTexture(TextureYouLoseImage, CHEIO);
 				YouLoseImage.setPosition(240, 20);
 				window.draw(YouLoseImage);
 
