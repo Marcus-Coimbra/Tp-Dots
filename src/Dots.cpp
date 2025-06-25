@@ -19,9 +19,7 @@ public:
 	sf::RectangleShape shape;
 	Clik estado;
 
-	Linha() :
-			estado(VAZIO) {
-	}
+	Linha() : estado(VAZIO) {}
 
 	Linha(float x, float y, float width, float height) {
 		shape.setSize(sf::Vector2f(width, height));
@@ -64,10 +62,8 @@ public:
 	Linha *linhaEsquerda;
 	Linha *linhaDireita;
 
-	Quadrado() :
-			ponto(NENHUM), turno(JOGADOR1), linhaSuperior(nullptr), linhaInferior(
-					nullptr), linhaEsquerda(nullptr), linhaDireita(nullptr) {
-	}
+	Quadrado() : ponto(NENHUM), turno(JOGADOR1), linhaSuperior(nullptr), linhaInferior(
+					nullptr), linhaEsquerda(nullptr), linhaDireita(nullptr) {}
 
 	Quadrado(float x, float y, float dim) :
 			ponto(NENHUM), turno(JOGADOR1), linhaSuperior(nullptr), linhaInferior(
