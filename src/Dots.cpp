@@ -6,6 +6,10 @@
 
 using namespace std;
 
+struct nsajodf{
+
+};
+
 enum Clik {
 	VAZIO, CHEIO
 };
